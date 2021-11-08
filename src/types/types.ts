@@ -62,7 +62,6 @@ type MeasurementResponseData = MeasurementCreationData & {
 export type Measurement = Document<MeasurementResponseData> & {
   status: MeasurementStatus;
   creationTimestamp: Date;
-  // With Notes / Comments / Report?
 };
 
 export type LegalDocumentKey = 'privacyPolicy' | 'termsOfUse';
@@ -89,7 +88,6 @@ export interface FibricheckSDK {
   getMeasurement: (measurementId: string) => Promise<Measurement>;
   getMeasurements: () => Promise<PagedResult<Measurement>>;
 
-  // reports
   generateReport: (
     measurementId: string,
     onReportReady: () => Report
