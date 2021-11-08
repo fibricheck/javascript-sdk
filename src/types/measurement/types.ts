@@ -1,5 +1,3 @@
-import { ObjectId } from '@extrahorizon/javascript-sdk';
-
 export type MeasurementStatus =
 /*
  * The measurement is received.
@@ -39,7 +37,8 @@ export type MeasurementStatus =
 | 'processing_results'
 /*
  * The measurement was successfully analyzed.
- * Depending on the value of autoPendingReview, set by the task in the previous step, the measurement will immediately transition to pending_review or stay in this status until manually transitioned to pending_review.
+ * Depending on the value of autoPendingReview, set by the task in the previous step,
+ * the measurement will immediately transition to pending_review or stay in this status until manually transitioned to pending_review.
  */
 | 'analyzed'
 /*
@@ -80,13 +79,6 @@ export type MeasurementDiagnosis =
   | 'atrial_fibrillation'
   | 'no_diagnosis';
 
-  export type Abnormalities =
-  | 'inverted'
-  | 'bad_signal_quality'
-  | 'pulse_not_found'
-  | 'saturated_rgb'
-  | 'quality_flag';
-
 export type Indicator = 'normal' | 'quality' | 'urgent' | 'warning';
 
 export type AlgoAnalysis =
@@ -97,17 +89,7 @@ export type AlgoAnalysis =
 
 export type ReviewType = 'automatic';
 
-export interface MotionData {
-  x: number[];
-  y: number[];
-  z: number[];
-}
-
-export interface Context {
-  symptoms: string[];
-  activity: string;
-}
-
-export interface Yuv { 
-  id: ObjectId
+export interface MeasurementContext {
+  symptoms: 'no_symptoms'| 'lightheaded'| 'confused'| 'fatigue'| 'other'| 'palpitations'| 'chest_pains'| 'shortness_of_breath'[];
+  activity: 'resting'| 'sleeping'| 'sitting'| 'walking'| 'working'| 'exercising'| 'other'| 'standing';
 }

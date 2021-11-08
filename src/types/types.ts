@@ -8,44 +8,47 @@ import {
   TokenDataOauth1,
 } from '@extrahorizon/javascript-sdk';
 
-import { 
-  Abnormalities,
+import { CameraData } from '@fibricheck/react-native-camera-sdk';
+
+import {
   AlgoAnalysis,
-  Context,
+  MeasurementContext,
   Indicator,
   MeasurementDiagnosis,
   MeasurementStatus,
-  MotionData,
   ReviewType,
-  Yuv
-} from './measurement/types'
+} from './measurement/types';
 import { Report } from './report/types';
 
-interface CreateMeasurementData {
-  data: string;
-  context: Context
+type UserRegisterData = RegisterUserData;
+
+interface Device {
+  manufacturer?: string;
+  model?: string;
+  os?: string;
+  type?: 'android' | 'ios';
 }
 
-export interface MeasurementData {
-  abnormalities?: Abnormalities[];
-  app: {
-    name: string;
-    version: string;
-  };
-  context:Context;
-  device: {
-    manufacturer?: string;
-    model?: string;
-    os?:string;
-    type?: 'android' | 'ios' | '???';
-  },
-  heartrate?: number;
+interface App {
+  name: string;
+  version: string;
+}
 
-  location: {
+type InputData = CameraData & {
+  signals?: Record<string, { time: number[]; data: number[]; }>;
+}
+
+type MeasurementCreationData = InputData & {
+  context?: MeasurementContext;
+}
+
+type MeasurementResponseData = MeasurementCreationData & {
+  app: App;
+  device: Device;
+  location?: {
     latitude: number;
     longitude: number;
-  },
-  measurement_timestamp: Date;
+  };
   diagnosis?: {
     text: string;
     label: MeasurementDiagnosis[];
@@ -54,59 +57,41 @@ export interface MeasurementData {
   indicator?: Indicator;
   algoAnalysis?: AlgoAnalysis;
   review_type?: ReviewType;
-  
-
-  acc: MotionData;
-  rotation: MotionData;
-  grav: MotionData;
-  gyro: MotionData;
-  time: number[];
-  attempts: number;
-  standardDeviationY: number[];
-  quadrants: Yuv[][]
 }
 
-export type Measurement = Document<MeasurementData> & {
+export type Measurement = Document<MeasurementResponseData> & {
   status: MeasurementStatus;
-  creationTimestamp: Date;  
+  creationTimestamp: Date;
   // With Notes / Comments / Report?
 };
 
+export type LegalDocumentKey = 'privacyPolicy' | 'termsOfUse';
 
-export interface LegalDocument {
+export interface Consent {
+  key: LegalDocumentKey;
   version: string;
   url: string;
 }
 
-export type LegalDocuments = {
-  privacyPolicy: LegalDocument;
-  termsOfUse: LegalDocument;
-};
-
-export type LegalDocumentKey = keyof LegalDocuments;
-
-export type Consent = { key: LegalDocumentKey, version: LegalDocument }
-
 export interface FibricheckSDK {
   // registration and auth
-  register: (data: RegisterUserData) => Promise<UserData>;
+  register: (data: UserRegisterData) => Promise<UserData>;
   getAuthorizationLink: () => string;
   authorize: () => void;
   authenticate: (
     credentials: ParamsOauth1WithEmail | ParamsOauth1WithToken,
+    onConsentNeeded: () => Consent[]
   ) => Promise<TokenDataOauth1>;
 
-  // consent or do we return this with authenticate? 
-  onConsentNeeded: () => Consent[];
-  giveConsent: (data:{ key: LegalDocumentKey }) => void;
+  giveConsent: (data: Omit<Consent, 'url'>) => void;
 
-  // handling measurements
-  postMeasurement(measurement: CreateMeasurementData): () => Promise<Measurement>;
-
-  // iets van pageing hierbij? of get by id?
+  postMeasurement: (measurement: MeasurementCreationData) => Promise<Measurement>;
+  getMeasurement: (measurementId: string) => Promise<Measurement>;
   getMeasurements: () => Promise<PagedResult<Measurement>>;
 
   // reports
-  generateReport: (measurementId: string) => Promise<Report>;
-  onReportReady: () => Report;
+  generateReport: (
+    measurementId: string,
+    onReportReady: () => Report
+  ) => Promise<Report>;
 }
