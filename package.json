@@ -1,0 +1,15 @@
+{
+  "name": "@fibricheck/javascript-sdk",
+  "version": "1.0.0",
+  "description": "Fibricheck API client for JavaScript/TypeScript ",
+  "main": "index.js",
+  "repository": "git@github.com:fibricheck/javascript-sdk.git",
+  "author": "jens.verbeken@craftzing.com",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.4.4"
+  },
+  "dependencies": {
+    "@extrahorizon/javascript-sdk": "^5.2.0-dev.153"
+  }
+}
