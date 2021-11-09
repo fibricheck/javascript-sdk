@@ -2,6 +2,8 @@
 
 ## React component to make a measurement
 
+Example showing how to hook the `react-native-camera-sdk` up with `javascript-sdk` to post the data returned from the camera to the backend
+
 ```ts
 import client from '@fibricheck/javascript-sdk';
 import { RNFibriCheckView } from '@fibricheck/react-native-camera-sdk';
@@ -42,6 +44,8 @@ const App = () => {
 ```
 
 ## Legal documents updated
+
+Example showing how to hook changes to legal documents with your application.
 
 ```ts
 import client from '@fibricheck/javascript-sdk';
