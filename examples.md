@@ -40,3 +40,37 @@ const App = () => {
   );
 };
 ```
+
+## Legal documents updated
+
+```ts
+import client from '@fibricheck/javascript-sdk';
+
+const sdk = client({
+  consumerKey: '',
+  consumerSecret: '',
+});
+
+sdk.authenticate({
+  password: '',
+  username: '',
+}, function onConsentNeeded(legalDocumentsUpdated) {
+  /* Will return an array of objects with a key, version and url.
+  * ie. 
+  *   [{ 
+  *     key: 'privacyPolicy',
+  *     version: '1.5.0', 
+  *     url: 'https://fibricheck.com/privacyPolicy/150'
+  *   }]
+  */
+
+  legalDocumentsUpdated.forEach(document => {
+    // 1. Request approval from the user
+
+    // 2. Pass the document back to the sdk
+    sdk.giveConsent(document);
+  });
+
+});
+
+```
