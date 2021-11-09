@@ -43,6 +43,30 @@ const App = () => {
 };
 ```
 
+## Registration 
+
+```ts
+import client from '@fibricheck/javascript-sdk';
+
+const sdk = client({
+  consumerKey: '',
+  consumerSecret: '',
+});
+
+const user = await sdk.register({
+  firstName: 'John',
+  lastName: 'Doe',
+  email: 'john.doe@example.com',
+  password: 'Strong!987',
+  phoneNumber: '000000',
+  birthDay: '1970/01/01',
+  gender: 0,
+  country: 'JO', // or 'AE'
+  language: 'AR'
+})
+
+```
+
 ## Legal documents updated
 
 Example showing how to hook changes to legal documents with your application.
@@ -77,4 +101,35 @@ sdk.authenticate({
 
 });
 
+```
+
+## Authentication with Authorization Code Grant flow
+
+```ts
+import { Linking } from 'react-native';
+import { parse } from 'query-string';
+import client from '@fibricheck/javascript-sdk';
+
+const sdk = client({
+  consumerKey: '',
+  consumerSecret: '',
+});
+
+const redirectUri = 'myapp://login';
+const url = sdk.getAuthorizationLink(redirectUri);
+// 1. Request an authorization link
+// https://pages.dev.fibricheck.com/authorize/?client_id=CLIENT_ID&response_type=code&redirect_uri=myapp://login
+
+// 2. User leave the App
+Linking.openUrl(url);
+
+// 3. Capture the user returning to the app
+// More info: https://reactnative.dev/docs/linking#getinitialurl
+const returnUrl = Linking.getInitialUrl();
+
+const { code } = parse(returnUrl.split('?')[1]);
+
+sdk.authenticate({
+  code
+});
 ```
