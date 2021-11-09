@@ -18,7 +18,7 @@ const App = () => {
       password: '',
       username: '',
     });
-  });
+  },[]);
 
   return (
     <RNFibriCheckView
