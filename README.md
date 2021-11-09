@@ -1,8 +1,6 @@
-# FibriCheck JavaScript SDK
+# Getting started
 
-This package serves as a JavaScript wrapper around all [Fibricheck](https://www.fibricheck.com/) cloud services.
-
-## Getting started
+This package serves as a JavaScript wrapper around all [FibriCheck](https://www.fibricheck.com/) cloud services.
 
 To get started with the FibriCheck SDK you'll need to install it, and then get credentials which will allow you to access the backend.
 

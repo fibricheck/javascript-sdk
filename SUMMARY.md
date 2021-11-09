@@ -1,3 +1,4 @@
 # Table of contents
 
-* [Javascript SDK](README.md)
+* [Getting Started](README.md)
+* [Examples](examples.md)
