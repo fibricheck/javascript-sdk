@@ -105,7 +105,7 @@ sdk.authenticate({
 
 ## Authentication with Authorization Code Grant flow
 
-```ts
+```typescript
 import { Linking } from 'react-native';
 import { parse } from 'query-string';
 import client from '@fibricheck/javascript-sdk';
