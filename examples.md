@@ -4,7 +4,7 @@
 
 Example showing how to hook the `react-native-camera-sdk` up with `javascript-sdk` to post the data returned from the camera to the backend
 
-```ts
+```typescript
 import client from '@fibricheck/javascript-sdk';
 import { RNFibriCheckView } from '@fibricheck/react-native-camera-sdk';
 import { useEffect } from 'react';
@@ -45,7 +45,7 @@ const App = () => {
 
 ## Registration 
 
-```ts
+```typescript
 import client from '@fibricheck/javascript-sdk';
 
 const sdk = client({
@@ -71,7 +71,7 @@ const user = await sdk.register({
 
 Example showing how to hook changes to legal documents with your application.
 
-```ts
+```typescript
 import client from '@fibricheck/javascript-sdk';
 
 const sdk = client({
