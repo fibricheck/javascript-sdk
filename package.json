@@ -2,23 +2,42 @@
   "name": "@fibricheck/javascript-sdk",
   "version": "1.0.0",
   "description": "Fibricheck API client for JavaScript/TypeScript ",
-  "main": "index.js",
+  "main": "build/index.cjs.js",
+  "types": "build/types/index.d.ts",
+  "module": "build/index.mjs",
   "repository": "git@github.com:fibricheck/javascript-sdk.git",
   "author": "jens.verbeken@craftzing.com",
   "license": "MIT",
   "scripts": {
+    "clean": "rimraf build",
     "lint": "eslint src/**/*.{ts,tsx}",
-    "lint-fix": "yarn lint --quiet --fix"
+    "lint-fix": "yarn lint --quiet --fix",
+    "build": "yarn build:library && yarn build:declarations",
+    "build:library": "rollup --config rollup.config.js",
+    "build:declarations": "tsc --project tsconfig.declarations.json"
   },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "files": [
+    "build"
+  ],
   "devDependencies": {
     "@qompium/eslint-config-q-react": "^1.2.11",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.0.6",
+    "@rollup/plugin-typescript": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
     "@typescript-eslint/parser": "^5.3.0",
+    "chokidar": "^3.5.2",
+    "copyfiles": "^2.4.1",
     "eslint": "^8.2.0",
+    "rollup": "^2.59.0",
     "typescript": "^4.4.4"
   },
   "dependencies": {
     "@extrahorizon/javascript-sdk": "^5.2.0-dev.153",
-    "@fibricheck/react-native-camera-sdk": "^0.0.20"
+    "@fibricheck/react-native-camera-sdk": "^0.0.20",
+    "react-native-device-info": "^8.4.5"
   }
 }
