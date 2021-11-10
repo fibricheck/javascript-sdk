@@ -134,7 +134,7 @@ export default (config: Config): FibricheckSDK => {
 
       // report exists and is rendered. Return current report url
       if (report?.status === 'rendered') {
-        return `https://${HOST}/files/v1/${report?.data?.readFileToken}/file`;
+        return `https://${host}/files/v1/${report?.data?.readFileToken}/file`;
       }
 
       // if no report exists, create it
@@ -158,7 +158,7 @@ export default (config: Config): FibricheckSDK => {
         (value: ReportDocument) => !!value
       );
 
-      return `https://${HOST}/files/v1/${result?.data?.readFileToken}/file`;
+      return `https://${host}/files/v1/${result?.data?.readFileToken}/file`;
     },
   };
 };
