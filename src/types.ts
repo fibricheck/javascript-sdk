@@ -67,6 +67,17 @@ export interface FibricheckSDK {
     onConsentNeeded: (data: Consent[]) => void
   ): Promise<TokenDataOauth1>;
   /**
+   *  Logout
+   *  @returns {boolean} Success
+   *  @example
+   *  await sdk.authenticate({
+   *    password: '',
+   *    username: '',
+   *  });
+   *  sdk.auth.logout();
+   */
+  logout: () => boolean;
+  /**
    * Return documents received from the `onConsentNeeded` callback on authentication after the user has approved them.
    */
   giveConsent: (data: Omit<Consent, 'url'>) => void;
