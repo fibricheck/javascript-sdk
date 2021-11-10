@@ -136,5 +136,4 @@ export type MeasurementResponseData = MeasurementCreationData & {
 
 export type Measurement = Document<MeasurementResponseData> & {
   status: MeasurementStatus;
-  creationTimestamp: Date;
 };

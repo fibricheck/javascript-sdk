@@ -1,4 +1,4 @@
-import { createOAuth1Client, PagedResultWithPager, ParamsOauth1, rqlBuilder, Schema } from '@extrahorizon/javascript-sdk';
+import { createOAuth1Client, PagedResultWithPager, ParamsOauth1, rqlBuilder, Schema, UserData } from '@extrahorizon/javascript-sdk';
 import DeviceInfo from 'react-native-device-info';
 import { HOST, REQUIRED_DOCUMENTS, SCHEMA_NAMES } from './constants';
 import { retryUntil } from './helpers';
@@ -22,7 +22,7 @@ export default (config: Config): FibricheckSDK => {
   let userId: string;
 
   return {
-    register: exhSdk.users.createAccount,
+    register: data => exhSdk.users.createAccount(data) as Promise<UserData>,
     authenticate: async (
       credentials,
       onConsentNeeded
@@ -62,7 +62,7 @@ export default (config: Config): FibricheckSDK => {
       schemas = schemaList.reduce(
         (acc, schema) => ({ ...acc, [schema.name as string]: schema }),
         {}
-      );
+      ) as Record<string, Schema>;
 
       return tokenData;
     },
@@ -107,7 +107,7 @@ export default (config: Config): FibricheckSDK => {
       const schema = schemas[SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS];
       return await exhSdk.data.documents.find<MeasurementResponseData>(schema.id as string) as PagedResultWithPager<Measurement>;
     },
-    getReport: async measurementId => {
+    getReportUrl: async measurementId => {
       const schema = schemas[SCHEMA_NAMES.MEASUREMENT_REPORTS];
       let report = await exhSdk.data.documents.findFirst<ReportDocumentData>(schema.id as string, {
         rql: rqlBuilder()
@@ -115,9 +115,9 @@ export default (config: Config): FibricheckSDK => {
           .build(),
       }) as ReportDocument;
 
-      // report exists and is rendered. Return current document
+      // report exists and is rendered. Return current report url
       if (report?.status === 'rendered') {
-        return report;
+        return `https://${HOST}/files/v1/${report?.data?.readFileToken}/file`;
       }
 
       // if no report exists, create it
@@ -130,8 +130,9 @@ export default (config: Config): FibricheckSDK => {
       }
 
       // await rendered
-      return retryUntil<ReportDocument>(
-        5,
+      const result = await retryUntil<ReportDocument>(
+        2000,
+        15,
         async () => await exhSdk.data.documents.findById<ReportDocumentData>(
           schema.id as string,
           report.id as string,
@@ -139,6 +140,8 @@ export default (config: Config): FibricheckSDK => {
         ),
         (value: ReportDocument) => !!value
       );
+
+      return `https://${HOST}/files/v1/${result?.data?.readFileToken}/file`;
     },
   };
 };

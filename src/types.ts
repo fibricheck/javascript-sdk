@@ -9,8 +9,6 @@ import {
 
 import { Measurement, MeasurementCreationData } from './types/measurement';
 
-import { ReportDocument } from './types/report';
-
 export type UserRegisterData = RegisterUserData;
 
 export type LegalDocumentKey = 'privacyPolicy' | 'termsOfUse';
@@ -22,10 +20,7 @@ export interface Consent {
 }
 
 export interface FibricheckSDK {
-  // registration and auth
   register: (data: UserRegisterData) => Promise<UserData>;
-  getAuthorizationLink: () => string;
-  authorize: () => void;
   authenticate: (
     credentials: ParamsOauth1WithEmail | ParamsOauth1WithToken,
     onConsentNeeded: (data: Consent[]) => void
@@ -37,5 +32,5 @@ export interface FibricheckSDK {
   getMeasurement: (measurementId: string) => Promise<Measurement>;
   getMeasurements: () => Promise<PagedResult<Measurement>>;
 
-  getReport: (measurementId: string) => Promise<ReportDocument>;
+  getReportUrl: (measurementId: string) => Promise<string>;
 }
