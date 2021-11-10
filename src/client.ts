@@ -16,6 +16,20 @@ type Config = { env: Env; } & Pick<ParamsOauth1, 'consumerKey' | 'consumerSecret
 
 export const documentVersionParse = (value: string) => `v${value.replace(/\./g, '')}`;
 
+/**
+ * Create FibriCheck sdk client.
+ *
+ * @example
+ * const sdk = client({
+ *   env: 'dev',
+ *   consumerKey: 'string',
+ *   consumerSecret: 'string',
+ * });
+ * await sdk.authenticate({
+ *   email: 'string',
+ *   password: 'string',
+ * });
+ */
 export default (config: Config): FibricheckSDK => {
   const env: Env = config.env ?? 'production';
   const host = env === 'production' ? PRODUCTION_HOST : DEV_HOST;
@@ -108,7 +122,7 @@ export default (config: Config): FibricheckSDK => {
     },
     getMeasurements: async () => {
       const schema = schemas[SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS];
-      return await exhSdk.data.documents.find<MeasurementResponseData>(schema.id as string) as PagedResultWithPager<Measurement>;
+      return await exhSdk.data.documents.find<MeasurementResponseData>(schema.id as string, { rql: rqlBuilder().eq('user_id', userId).build() }) as PagedResultWithPager<Measurement>;
     },
     getReportUrl: async measurementId => {
       const schema = schemas[SCHEMA_NAMES.MEASUREMENT_REPORTS];
