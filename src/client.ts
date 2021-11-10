@@ -122,7 +122,7 @@ export default (config: Config): FibricheckSDK => {
     },
     getMeasurements: async () => {
       const schema = schemas[SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS];
-      return await exhSdk.data.documents.find<MeasurementResponseData>(schema.id as string, { rql: rqlBuilder().eq('user_id', userId).build() }) as PagedResultWithPager<Measurement>;
+      return await exhSdk.data.documents.find<MeasurementResponseData>(schema.id as string, { rql: rqlBuilder().eq('creatorId', userId).build() }) as PagedResultWithPager<Measurement>;
     },
     getReportUrl: async measurementId => {
       const schema = schemas[SCHEMA_NAMES.MEASUREMENT_REPORTS];
