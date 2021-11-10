@@ -1,13 +1,14 @@
 import { createOAuth1Client, PagedResultWithPager, ParamsOauth1, rqlBuilder, Schema, UserData } from '@extrahorizon/javascript-sdk';
 import DeviceInfo from 'react-native-device-info';
-import { HOST, REQUIRED_DOCUMENTS, SCHEMA_NAMES } from './constants';
+import { DEV_HOST, PRODUCTION_HOST, REQUIRED_DOCUMENTS, SCHEMA_NAMES } from './constants';
 import { retryUntil } from './helpers';
 import { FibricheckSDK, Consent } from './types';
 import { GeneralConfiguration, UserConfiguration } from './types/configuration';
 import { Measurement, MeasurementResponseData } from './types/measurement';
 import { ReportDocument, ReportDocumentData } from './types/report';
 
-type Config = Pick<ParamsOauth1, 'consumerKey' | 'consumerSecret'>
+type Env = 'dev' | 'production';
+type Config = { env: Env; } & Pick<ParamsOauth1, 'consumerKey' | 'consumerSecret'>
 /* function to parse a string like '1.5.0' to something like 'v150'
  * '1.5.0' format comes from the current documents
  * 'v150' format comes from the user's currenctly signed versions
@@ -16,7 +17,9 @@ type Config = Pick<ParamsOauth1, 'consumerKey' | 'consumerSecret'>
 export const documentVersionParse = (value: string) => `v${value.replace(/\./g, '')}`;
 
 export default (config: Config): FibricheckSDK => {
-  const exhSdk = createOAuth1Client({ host: HOST, ...config });
+  const env: Env = config.env ?? 'production';
+  const host = env === 'production' ? PRODUCTION_HOST : DEV_HOST;
+  const exhSdk = createOAuth1Client({ host, ...config });
 
   let schemas: Record<string, Schema>;
   let userId: string;
