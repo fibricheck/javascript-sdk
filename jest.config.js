@@ -11,6 +11,7 @@ module.exports = {
     '/build/',
   ],
   collectCoverage: true,
+  coverageDirectory: 'test-results/coverage',
   reporters: [
     'default',
   ],
