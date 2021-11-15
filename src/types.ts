@@ -5,6 +5,7 @@ import {
   ParamsOauth1WithToken,
   PagedResult,
   TokenDataOauth1,
+  AffectedRecords,
 } from '@extrahorizon/javascript-sdk';
 
 import { Measurement, MeasurementCreationData } from './types/measurement';
@@ -79,8 +80,10 @@ export interface FibricheckSDK {
   logout: () => boolean;
   /**
    * Return documents received from the `onConsentNeeded` callback on authentication after the user has approved them.
+   * @params {Omit<Consent, 'url'>} data
+   * @returns AffectedRecords
    */
-  giveConsent: (data: Omit<Consent, 'url'>) => void;
+  giveConsent: (data: Omit<Consent, 'url'>) => Promise<AffectedRecords>;
   /**
    * Send a measurement to the cloud.
    * @see https://docs.fibricheck.com/examples#react-component-to-make-a-measurement
