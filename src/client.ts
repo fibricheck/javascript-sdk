@@ -106,7 +106,6 @@ export default (config: Config): FibricheckSDK => {
           name: 'mobile-spot-check',
           version: DeviceInfo.getVersion(),
         },
-        measurement_timestamp: Date.now(),
       });
 
       return result as Measurement;
