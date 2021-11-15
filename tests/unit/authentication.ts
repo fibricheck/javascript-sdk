@@ -10,6 +10,7 @@ import {
 
 describe('authentication', () => {
   let sdk: FibricheckSDK;
+
   beforeAll(async () => {
     sdk = client(mockClientParams);
   });

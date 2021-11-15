@@ -6,6 +6,7 @@ import { cameraResult, mockApp, mockDevice, mockSchemas } from '../__helpers__/m
 
 describe('measurement', () => {
   let sdk: FibricheckSDK;
+
   beforeAll(async () => {
     sdk = client(mockClientParams);
     mockSdk.auth.authenticate.mockReturnValue({ userId: '' });
