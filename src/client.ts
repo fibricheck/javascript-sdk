@@ -8,7 +8,7 @@ import { Measurement, MeasurementResponseData } from './types/measurement';
 import { ReportDocument, ReportDocumentData } from './types/report';
 
 type Env = 'dev' | 'production';
-type Config = { env: Env; } & Pick<ParamsOauth1, 'consumerKey' | 'consumerSecret'>
+type Config = { env?: Env; } & Pick<ParamsOauth1, 'consumerKey' | 'consumerSecret'>
 /* function to parse a string like '1.5.0' to something like 'v150'
  * '1.5.0' format comes from the current documents
  * 'v150' format comes from the user's currenctly signed versions
@@ -16,16 +16,30 @@ type Config = { env: Env; } & Pick<ParamsOauth1, 'consumerKey' | 'consumerSecret
 
 export const documentVersionParse = (value: string) => `v${value.replace(/\./g, '')}`;
 
+/**
+ * Create FibriCheck sdk client.
+ *
+ * @example
+ * const sdk = client({
+ *   env: 'dev',
+ *   consumerKey: 'string',
+ *   consumerSecret: 'string',
+ * });
+ * await sdk.authenticate({
+ *   email: 'string',
+ *   password: 'string',
+ * });
+ */
 export default (config: Config): FibricheckSDK => {
   const env: Env = config.env ?? 'production';
   const host = env === 'production' ? PRODUCTION_HOST : DEV_HOST;
   const exhSdk = createOAuth1Client({ host, ...config });
 
   let schemas: Record<string, Schema>;
-  let userId: string;
 
   return {
     register: data => exhSdk.users.createAccount(data) as Promise<UserData>,
+    logout: exhSdk.auth.logout,
     authenticate: async (
       credentials,
       onConsentNeeded
@@ -60,8 +74,6 @@ export default (config: Config): FibricheckSDK => {
         rql: rqlBuilder().in('name', Object.values(SCHEMA_NAMES)).select(['id', 'name']).build(),
       });
 
-      userId = tokenData.userId as string;
-
       schemas = schemaList.reduce(
         (acc, schema) => ({ ...acc, [schema.name as string]: schema }),
         {}
@@ -69,20 +81,17 @@ export default (config: Config): FibricheckSDK => {
 
       return tokenData;
     },
-    giveConsent: async (data: Omit<Consent, 'url'>) => {
-      console.log('userId', userId);
-      return await exhSdk.configurations.users.update(userId, {
-        data: {
-          documents: {
-            [data.key]: {
-              [documentVersionParse(data.version)]: {
-                timestamp: new Date(),
-              },
+    giveConsent: async (data: Omit<Consent, 'url'>) => await exhSdk.configurations.users.update(await exhSdk.raw.userId as string, {
+      data: {
+        documents: {
+          [data.key]: {
+            [documentVersionParse(data.version)]: {
+              timestamp: new Date(),
             },
           },
         },
-      });
-    },
+      },
+    }),
     postMeasurement: async measurement => {
       const schema = schemas[SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS];
       const result = await exhSdk.data.documents.create<MeasurementResponseData>(schema.id as string, {
@@ -108,7 +117,9 @@ export default (config: Config): FibricheckSDK => {
     },
     getMeasurements: async () => {
       const schema = schemas[SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS];
-      return await exhSdk.data.documents.find<MeasurementResponseData>(schema.id as string) as PagedResultWithPager<Measurement>;
+      const userId = await exhSdk.raw.userId as string;
+      const rql = rqlBuilder().eq('creatorId', userId).build();
+      return await exhSdk.data.documents.find<MeasurementResponseData>(schema.id as string, { rql }) as PagedResultWithPager<Measurement>;
     },
     getReportUrl: async measurementId => {
       const schema = schemas[SCHEMA_NAMES.MEASUREMENT_REPORTS];
@@ -120,7 +131,7 @@ export default (config: Config): FibricheckSDK => {
 
       // report exists and is rendered. Return current report url
       if (report?.status === 'rendered') {
-        return `https://${HOST}/files/v1/${report?.data?.readFileToken}/file`;
+        return `https://${host}/files/v1/${report?.data?.readFileToken}/file`;
       }
 
       // if no report exists, create it
@@ -144,7 +155,7 @@ export default (config: Config): FibricheckSDK => {
         (value: ReportDocument) => !!value
       );
 
-      return `https://${HOST}/files/v1/${result?.data?.readFileToken}/file`;
+      return `https://${host}/files/v1/${result?.data?.readFileToken}/file`;
     },
   };
 };
