@@ -22,4 +22,7 @@ export const mockClientParams = {
   consumerSecret: '',
 };
 
-export const mockPrivacyPolicy = { version: '1.5.0', url: 'https://pages.dev.fibricheck.com/privacy-policy/1.5.0/' };
+export const mockPrivacyPolicy = {
+  version: '1.5.0',
+  url: 'https://pages.dev.fibricheck.com/privacy-policy/1.5.0/',
+};
