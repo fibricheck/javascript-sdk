@@ -27,13 +27,13 @@ describe('measurement', () => {
     });
   });
 
-  it('should get a measurement', async () => {
+  it('should fetch a measurement', async () => {
     await sdk.getMeasurement('test_id');
 
     expect(mockSdk.data.documents.findById).toBeCalledWith('fibricheck-measurements', 'test_id');
   });
 
-  it('should get all measurements', async () => {
+  it('should fetch all measurements', async () => {
     (mockSdk.raw as any).userId = 'mockId';
 
     await sdk.getMeasurements();
