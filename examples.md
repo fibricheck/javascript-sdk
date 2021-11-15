@@ -1,6 +1,46 @@
 # Examples
 
-## React component to make a measurement
+## First time authentication to save token/tokenSecret
+
+
+```typescript
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+(async () => {
+
+  const sdk = client({
+    consumerKey: '',
+    consumerSecret: '',
+  });
+
+  const tokenData = await sdk.authenticate({
+    email: '',
+    password: '',
+  });
+
+  AsyncStorage.setItem('tokenData', JSON.stringify(tokenData));
+
+})();
+```
+
+Afterwards you can use the stored tokenData to authenticate.
+
+```typescript
+(async () => {
+  import AsyncStorage from '@react-native-async-storage/async-storage';
+
+  const tokenDataString = await AsyncStorage.getItem('tokenData');
+  const tokenData = JSON.parse(tokenDataString);
+
+  await sdk.auth.authenticate({
+    token: tokenData.key,
+    tokenSecret: tokenData.secret,
+  });
+
+})();
+```
+
+## Camera SDK component to make a measurement
 
 Example showing how to hook the `react-native-camera-sdk` up with `javascript-sdk` to post the data returned from the camera to the backend
 
@@ -17,8 +57,8 @@ const sdk = client({
 const App = () => {
   useEffect(() => {
     sdk.authenticate({
-      password: '',
-      username: '',
+      token: '',
+      tokenSecret: '',
     });
   },[]);
 
@@ -100,14 +140,38 @@ sdk.authenticate({
   });
 
 });
-
 ```
 
-## Authentication with Authorization Code Grant flow
+
+## Fetching one measurement
+
+Using `sdk.getMeasurement` will return one measurement.
 
 ```typescript
-import { Linking } from 'react-native';
-import { parse } from 'query-string';
+import client from '@fibricheck/javascript-sdk';
+
+
+const sdk = client({
+  consumerKey: '',
+  consumerSecret: '',
+});
+
+sdk.authenticate({
+  token: '',
+  tokenSecret: '',
+});
+
+
+const measurementId = '0000';
+const measurement = await sdk.getMeasurement(measurementId);
+```
+
+
+## Fetching all your measurements
+
+Using `sdk.getMeasurements` will return a paginated result. You can find the measurements under the `data` property. You can also use the `next` and `previous` functions present on the result to navigate through the user's measurents.
+
+```typescript
 import client from '@fibricheck/javascript-sdk';
 
 const sdk = client({
@@ -115,21 +179,57 @@ const sdk = client({
   consumerSecret: '',
 });
 
-const redirectUri = 'myapp://login';
-const url = sdk.getAuthorizationLink(redirectUri);
-// 1. Request an authorization link
-// https://pages.dev.fibricheck.com/authorize/?client_id=CLIENT_ID&response_type=code&redirect_uri=myapp://login
+sdk.authenticate({
+  token: '',
+  tokenSecret: '',
+});
 
-// 2. User leave the App
-Linking.openUrl(url);
+// Returns the first 20 measurements
+const measurements = await sdk.getMeasurements();
 
-// 3. Capture the user returning to the app
-// More info: https://reactnative.dev/docs/linking#getinitialurl
-const returnUrl = Linking.getInitialUrl();
+// Returns the next 20 measurements
+const nextMeasurements = await measurements.next();
+```
 
-const { code } = parse(returnUrl.split('?')[1]);
+## Requesting a measurement report and rendering PDF
+
+The `sdk.getReportUrl` accepts a `measurementId` and will handle creation / fetching of the report. This function works great in combination with 
+
+- first time calling this function for a measurement, it will take a little longer as the cloud service will render the report. Once it is ready (~5s) the url where you can fetch it will be returned
+- subsequent calls will be much faster, as the report is already rendered and the url will be returned almost instantly.
+
+```typescript
+import client from '@fibricheck/javascript-sdk';
+import Pdf from 'react-native-pdf';
+
+const sdk = client({
+  consumerKey: '',
+  consumerSecret: '',
+});
 
 sdk.authenticate({
-  code
+  token: '',
+  tokenSecret: '',
 });
+
+const measurementId = '0000';
+
+const App = () => {
+  const [uri,setUri] = useState();
+
+  useEffect(()=> {
+    (async ()=> {
+      const uri = await sdk.getReportUrl(measurementId);
+      setUri(uri)
+    })();
+  },[])
+
+  return (
+    <Pdf
+      source={{
+        uri
+      }}
+    />
+  );
+}
 ```
