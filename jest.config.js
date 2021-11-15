@@ -14,4 +14,5 @@ module.exports = {
   reporters: [
     'default',
   ],
+  maxWorkers: 1
 };
