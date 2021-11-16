@@ -3,4 +3,7 @@ module.exports = {
   rules: {
     // Custom project rules come here, if required
   },
+  parserOptions: {
+    project: './tsconfig.eslint.json'
+  },  
 };
