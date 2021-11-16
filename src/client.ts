@@ -64,6 +64,7 @@ export default (config: Config): FibricheckSDK => {
               } as Consent;
             }
           }
+          return false;
         }).filter(value => value) as Consent[];
 
       if (documentsToSign.length > 0) {
