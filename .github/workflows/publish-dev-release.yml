@@ -51,10 +51,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_PACKAGES_PUBLISH_TOKEN }}
       - run: yarn install
       - run: yarn build
-      - name: Dev version
-        uses: codaline-io/dev-version-action@0.1.2
-        with:
-          branch: develop
+      - run: yarn add-suffix
       - name: Extract version
         id: extract_version
         uses: Saionaro/extract-package-version@v1.0.6
