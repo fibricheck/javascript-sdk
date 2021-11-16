@@ -1,4 +1,4 @@
-import { createOAuth1Client, PagedResultWithPager, ParamsOauth1, rqlBuilder, Schema, UserData } from '@extrahorizon/javascript-sdk';
+import { createOAuth1Client, PagedResultWithPager, ParamsOauth1, rqlBuilder, Schema, UserData, UserNotAuthenticatedError } from '@extrahorizon/javascript-sdk';
 import DeviceInfo from 'react-native-device-info';
 import { DEV_HOST, PRODUCTION_HOST, REQUIRED_DOCUMENTS, SCHEMA_NAMES } from './constants';
 import { retryUntil } from './helpers';
@@ -35,7 +35,44 @@ export default (config: Config): FibricheckSDK => {
   const host = env === 'production' ? PRODUCTION_HOST : DEV_HOST;
   const exhSdk = createOAuth1Client({ host, ...config });
 
-  let schemas: Record<string, Schema>;
+  const getSchemaById = (function getSchema() {
+    let schemas: Record<string, Schema>;
+
+    return async (schemaId: string) => {
+      try {
+        if (!schemas) {
+          const schemaList = await exhSdk.data.schemas.findAll({
+            rql: rqlBuilder().in('name', Object.values(SCHEMA_NAMES)).select(['id', 'name']).build(),
+          });
+
+          schemas = schemaList.reduce(
+            (acc, schema) => ({ ...acc, [schema.name as string]: schema }),
+            {}
+          ) as Record<string, Schema>;
+        }
+        return schemas?.[schemaId];
+      } catch (error: any) {
+        if (error instanceof UserNotAuthenticatedError) {
+          throw Error(`
+Looks like you forgot to authenticate. Please check the README file to get started.  
+As example you can authenticate using this snippet:
+
+const sdk = client({
+  consumerKey: '${config.consumerKey}',
+  consumerSecret: '${config.consumerSecret}'
+});
+
+await sdk.authenticate({
+  email: '',
+  password: '',
+});
+`);
+        } else {
+          throw error;
+        }
+      }
+    };
+  }());
 
   return {
     register: data => exhSdk.users.createAccount(data) as Promise<UserData>,
@@ -71,15 +108,6 @@ export default (config: Config): FibricheckSDK => {
         onConsentNeeded(documentsToSign);
       }
 
-      const schemaList = await exhSdk.data.schemas.findAll({
-        rql: rqlBuilder().in('name', Object.values(SCHEMA_NAMES)).select(['id', 'name']).build(),
-      });
-
-      schemas = schemaList.reduce(
-        (acc, schema) => ({ ...acc, [schema.name as string]: schema }),
-        {}
-      ) as Record<string, Schema>;
-
       return tokenData;
     },
     giveConsent: async (data: Omit<Consent, 'url'>) => await exhSdk.configurations.users.update(await exhSdk.raw.userId as string, {
@@ -94,7 +122,7 @@ export default (config: Config): FibricheckSDK => {
       },
     }),
     postMeasurement: async measurement => {
-      const schema = schemas[SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS];
+      const schema = await getSchemaById(SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS);
       const result = await exhSdk.data.documents.create<MeasurementResponseData>(schema.id as string, {
         ...measurement,
         device: {
@@ -112,17 +140,17 @@ export default (config: Config): FibricheckSDK => {
       return result as Measurement;
     },
     getMeasurement: async measurmentId => {
-      const schema = schemas[SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS];
+      const schema = await getSchemaById(SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS);
       return await exhSdk.data.documents.findById<MeasurementResponseData>(schema.id as string, measurmentId) as Measurement;
     },
     getMeasurements: async () => {
-      const schema = schemas[SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS];
+      const schema = await getSchemaById(SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS);
       const userId = await exhSdk.raw.userId as string;
       const rql = rqlBuilder().eq('creatorId', userId).build();
-      return await exhSdk.data.documents.find<MeasurementResponseData>(schema.id as string, { rql }) as PagedResultWithPager<Measurement>;
+      return await exhSdk.data.documents.find<MeasurementResponseData>(schema?.id as string, { rql }) as PagedResultWithPager<Measurement>;
     },
     getReportUrl: async measurementId => {
-      const schema = schemas[SCHEMA_NAMES.MEASUREMENT_REPORTS];
+      const schema = await getSchemaById(SCHEMA_NAMES.MEASUREMENT_REPORTS);
       let report = await exhSdk.data.documents.findFirst<ReportDocumentData>(schema.id as string, {
         rql: rqlBuilder()
           .eq('data.measurementId', measurementId)
