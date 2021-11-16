@@ -45,3 +45,54 @@ import client from "@fibricheck/javascript-sdk";
   });
 })();
 ```
+
+## API
+
+You can initialize the default export, the returned object will have the following interface.
+
+```ts
+export interface FibricheckSDK {
+  /**
+   * Create an account
+   */
+  register: (data: UserRegisterData) => Promise<UserData>;
+  /**
+   * Use token authentication.
+   * As second parameter you need to pass in callback function that is fired when the user needs to sign updated legal documents
+   */
+  authenticate(credentials: ParamsOauth1WithToken,
+    onConsentNeeded: (data: Consent[]) => void
+  ): Promise<TokenDataOauth1>;
+  /**
+   * Use password authentication.
+   * As second parameter you need to pass in callback function that is fired when the user needs to sign updated legal documents
+   */
+  authenticate(credentials: ParamsOauth1WithEmail,
+    onConsentNeeded: (data: Consent[]) => void
+  ): Promise<TokenDataOauth1>;
+  /**
+   *  Logout
+   */
+  logout: () => boolean;
+  /**
+   * Return documents received from the `onConsentNeeded` callback on authentication after the user has approved them.
+   */
+  giveConsent: (data: Omit<Consent, 'url'>) => Promise<AffectedRecords>;
+  /**
+   * Send a measurement to the cloud.
+   */
+  postMeasurement: (measurement: MeasurementCreationData) => Promise<Measurement>;
+  /**
+   * Gets a measurement by measurementId
+   */
+  getMeasurement: (measurementId: string) => Promise<Measurement>;
+  /**
+   * Gets all measurements for the current user
+   */
+  getMeasurements: () => Promise<PagedResult<Measurement>>;
+  /**
+   * Returns an url that can be used to render or download the report as PDF.
+   */
+  getReportUrl: (measurementId: string) => Promise<string>;
+}
+```
