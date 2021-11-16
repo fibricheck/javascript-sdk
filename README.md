@@ -10,6 +10,8 @@ In your project, if you are using yarn or npm you need to create a file called `
 
 ```
 @fibricheck:registry=https://npm.pkg.github.com
+@extrahorizon:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${AUTH_TOKEN}
 ```
 
 Alternatively, this file can be added/edited in your home directory and it will be applied to all projects.
