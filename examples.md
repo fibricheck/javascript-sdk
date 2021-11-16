@@ -2,7 +2,7 @@
 
 ## First time authentication to save token/tokenSecret
 
-You can use your email/password combination initially to retrieve an OAth1 token/secret combination which you can use on to reauthenticate when reloading the application.
+You can use your email/password combination initially to retrieve an OAuth1 token/secret combination which you can use on to reauthenticate when reloading the application. In this example `@react-native-async-storage/async-storage` is used, but you can use any persistent storage system.
 
 ```typescript
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -43,7 +43,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 ## Camera SDK component to make a measurement
 
-Example showing how to hook the `react-native-camera-sdk` up with `javascript-sdk` to post the data returned from the camera to the backend
+You can use the `RNFibriCheckView` exported from the  `@fibricheck/react-native-camera-sdk` package to perform a measurement and hook up `sdk.postMeasurement` to post the data returned from the camera to the backend in the `onMeasurementProcessed` event.
 
 ```typescript
 import client from '@fibricheck/javascript-sdk';
@@ -112,7 +112,7 @@ const user = await sdk.register({
 
 ## Legal documents updated
 
-When you use the `authentication` function, the second parameter should be a callback function (this can also be an arrow function). This function will be called when legal documents have been updated in the FibriCheck cloud and the end-user needs to reapprove these. Example showing how to hook changes to legal documents with your application.
+When you use the `authentication` function, the second parameter should be a callback function (this can also be an arrow function). This function will be called when legal documents have been updated in the FibriCheck cloud and the end-user needs to reapprove these. Example showing how to hook changes to legal documents change with your application and calling the `giveConsent` function with the document after the user has approved these.
 
 ```typescript
 import client from '@fibricheck/javascript-sdk';
@@ -163,7 +163,6 @@ sdk.authenticate({
   token: '',
   tokenSecret: '',
 });
-
 
 const measurementId = '0000';
 const measurement = await sdk.getMeasurement(measurementId);
