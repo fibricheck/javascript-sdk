@@ -12,6 +12,13 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
+      - name: Create .npmrc file
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
+          echo "@extrahorizon:registry=https://npm.pkg.github.com" >> .npmrc
+          echo "@fibricheck:registry=https://npm.pkg.github.com" >> .npmrc
+        env:
+         GITHUB_TOKEN: ${{ secrets.GH_PACKAGES_FULL_READ_ACCESS_TOKEN }}
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
