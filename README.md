@@ -32,6 +32,8 @@ yarn add @fibricheck/javascript-sdk
 
 ## Quick Start
 
+To be able to receive data from the FibriCheck cloud services, an app should authenticate with a username/password or token/tokenSecret combination.
+
 ```javascript
 import client from "@fibricheck/javascript-sdk";
 
@@ -42,8 +44,8 @@ import client from "@fibricheck/javascript-sdk";
   });
 
   await sdk.authenticate({
-    password: "",
     username: "",
+    password: "",
   });
 })();
 ```
@@ -52,8 +54,8 @@ import client from "@fibricheck/javascript-sdk";
 
 When you initialize the sdk, the returned object will have the following interface. These descriptions and signatures are also available as inline JSDoc in your IDE. 
 
-```ts
-export interface FibricheckSDK {
+```typescript
+interface FibricheckSDK {
   /**
    * Create an account
    */
