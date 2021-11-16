@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          ref: dev
+          ref: develop
       - name: Use Node LTS
         uses: actions/setup-node@v1
         with:
@@ -36,7 +36,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          ref: dev
+          ref: develop
       - uses: actions/setup-node@v1
         with:
           node-version: 14
@@ -46,6 +46,8 @@ jobs:
       - run: yarn build
       - name: Dev version
         uses: codaline-io/dev-version-action@0.1.2
+        with:
+          branch: develop
       - name: Extract version
         id: extract_version
         uses: Saionaro/extract-package-version@v1.0.6
