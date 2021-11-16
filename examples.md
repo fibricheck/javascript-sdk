@@ -1,3 +1,10 @@
+---
+description: >-
+  This page contains some examples to get you started on using the SDK. For
+  completeness, every example includes the creation and authentication of the
+  SDK. This is of course not necessary and should be
+---
+
 # Examples
 
 ## First time authentication to save token/tokenSecret
@@ -33,7 +40,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
   const tokenDataString = await AsyncStorage.getItem('tokenData');
   const tokenData = JSON.parse(tokenDataString);
 
-  await sdk.auth.authenticate({
+  await sdk.authenticate({
     token: tokenData.key,
     tokenSecret: tokenData.secret,
   });
@@ -43,7 +50,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 ## Camera SDK component to make a measurement
 
-You can use the `RNFibriCheckView` exported from the  `@fibricheck/react-native-camera-sdk` package to perform a measurement and hook up `sdk.postMeasurement` to post the data returned from the camera to the backend in the `onMeasurementProcessed` event.
+You can use the `RNFibriCheckView` exported from the `@fibricheck/react-native-camera-sdk` package to perform a measurement and hook up `sdk.postMeasurement` to post the data returned from the camera to the backend in the `onMeasurementProcessed` event.
 
 ```typescript
 import client from '@fibricheck/javascript-sdk';
@@ -55,13 +62,12 @@ const sdk = client({
   consumerSecret: '',
 });
 
+await sdk.authenticate({
+  token: '',
+  tokenSecret: '',
+});
+
 const App = () => {
-  useEffect(() => {
-    sdk.authenticate({
-      token: '',
-      tokenSecret: '',
-    });
-  },[]);
 
   return (
     <RNFibriCheckView
@@ -84,7 +90,7 @@ const App = () => {
 };
 ```
 
-## Registration 
+## Registration
 
 The following snippet shows how you can register a new user. You do not need authentication for registration.
 
@@ -103,11 +109,10 @@ const user = await sdk.register({
   password: 'Strong!987',
   phoneNumber: '000000',
   birthDay: '1970/01/01',
-  gender: 0,
+  gender: 0, // 0 = Not known; 1 = Male; 2 = Female; 9 = Not applicable
   country: 'JO', // or 'AE'
   language: 'AR'
 })
-
 ```
 
 ## Legal documents updated
@@ -122,7 +127,7 @@ const sdk = client({
   consumerSecret: '',
 });
 
-sdk.authenticate({
+await sdk.authenticate({
   password: '',
   username: '',
 }, function onConsentNeeded(legalDocumentsUpdated) {
@@ -145,7 +150,6 @@ sdk.authenticate({
 });
 ```
 
-
 ## Fetching one measurement
 
 Use the `sdk.getMeasurement` function to get a single measurement based on a id. Only measurements for the currently authenticated user can be requested.
@@ -159,7 +163,7 @@ const sdk = client({
   consumerSecret: '',
 });
 
-sdk.authenticate({
+await sdk.authenticate({
   token: '',
   tokenSecret: '',
 });
@@ -167,7 +171,6 @@ sdk.authenticate({
 const measurementId = '0000';
 const measurement = await sdk.getMeasurement(measurementId);
 ```
-
 
 ## Fetching all your measurements
 
@@ -181,7 +184,7 @@ const sdk = client({
   consumerSecret: '',
 });
 
-sdk.authenticate({
+await sdk.authenticate({
   token: '',
   tokenSecret: '',
 });
@@ -197,8 +200,8 @@ const nextMeasurements = await measurements.next();
 
 The `sdk.getReportUrl` accepts a `measurementId` and will handle creation / fetching of the report. This function works great in combination with `react-native-pdf` or `react-native-share`
 
-- first time calling this function for a measurement, it will take a little longer as the cloud service will render the report. Once it is ready (~5s) the url where you can fetch it will be returned
-- subsequent calls will be much faster, as the report is already rendered and the url will be returned almost instantly.
+* first time calling this function for a measurement, it will take a little longer as the cloud service will render the report. Once it is ready (\~5s) the url where you can fetch it will be returned
+* subsequent calls will be much faster, as the report is already rendered and the url will be returned almost instantly.
 
 ```typescript
 import client from '@fibricheck/javascript-sdk';
@@ -209,7 +212,7 @@ const sdk = client({
   consumerSecret: '',
 });
 
-sdk.authenticate({
+await sdk.authenticate({
   token: '',
   tokenSecret: '',
 });
