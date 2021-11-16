@@ -48,7 +48,7 @@ import client from "@fibricheck/javascript-sdk";
 
 ## API
 
-You can initialize the default export, the returned object will have the following interface.
+When you initialize the sdk, the returned object will have the following interface. These descriptions and signatures are also available as inline JSDoc in your IDE. 
 
 ```ts
 export interface FibricheckSDK {
