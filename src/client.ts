@@ -1,4 +1,4 @@
-import { createOAuth1Client, PagedResultWithPager, ParamsOauth1, rqlBuilder, Schema, UserData } from '@extrahorizon/javascript-sdk';
+import { createOAuth1Client, PagedResultWithPager, ParamsOauth1, rqlBuilder, Schema, UserData, UserNotAuthenticatedError } from '@extrahorizon/javascript-sdk';
 import DeviceInfo from 'react-native-device-info';
 import { DEV_HOST, PRODUCTION_HOST, REQUIRED_DOCUMENTS, SCHEMA_NAMES } from './constants';
 import { retryUntil } from './helpers';
@@ -39,17 +39,38 @@ export default (config: Config): FibricheckSDK => {
     let schemas: Record<string, Schema>;
 
     return async (schemaId: string) => {
-      if (!schemas) {
-        const schemaList = await exhSdk.data.schemas.findAll({
-          rql: rqlBuilder().in('name', Object.values(SCHEMA_NAMES)).select(['id', 'name']).build(),
-        });
+      try {
+        if (!schemas) {
+          const schemaList = await exhSdk.data.schemas.findAll({
+            rql: rqlBuilder().in('name', Object.values(SCHEMA_NAMES)).select(['id', 'name']).build(),
+          });
 
-        schemas = schemaList.reduce(
-          (acc, schema) => ({ ...acc, [schema.name as string]: schema }),
-          {}
-        ) as Record<string, Schema>;
+          schemas = schemaList.reduce(
+            (acc, schema) => ({ ...acc, [schema.name as string]: schema }),
+            {}
+          ) as Record<string, Schema>;
+        }
+        return schemas?.[schemaId];
+      } catch (error: any) {
+        if (error instanceof UserNotAuthenticatedError) {
+          throw Error(`
+Looks like you forgot to authenticate. Please check the README file to get started.  
+As example you can authenticate using this snippet:
+
+const sdk = client({
+  consumerKey: '${config.consumerKey}',
+  consumerSecret: '${config.consumerSecret}'
+});
+
+await sdk.authenticate({
+  email: '',
+  password: '',
+});
+`);
+        } else {
+          throw error;
+        }
       }
-      return schemas?.[schemaId];
     };
   }());
 
