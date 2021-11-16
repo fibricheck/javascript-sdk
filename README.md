@@ -50,12 +50,13 @@ import client from "@fibricheck/javascript-sdk";
 })();
 ```
 
-| Name | Default | Description |
-| -- | -- | -- |
-| `env` | `dev` | Specifies whether you want to connect to the `dev` environment or `production` |
-| `consumerKey` |  | <b>Required</b>. Your application's `consumerKey` |
-| `consumerSecret` |  | <b>Required</b>. Your application's `consumerSecret` |
+The client method (default export) supports several options you may set to achieve the expected behavior:
 
+| Name             | Default | Description                                          |
+| ---------------- | ------- | ---------------------------------------------------- |
+| `env`            | `dev`   | Specifies the environment you connect to             |
+| `consumerKey`    |         | <b>Required</b>. Your application's `consumerKey`    |
+| `consumerSecret` |         | <b>Required</b>. Your application's `consumerSecret` |
 
 ## API
 
