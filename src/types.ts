@@ -104,7 +104,7 @@ export interface FibricheckSDK {
   getMeasurements: () => Promise<PagedResult<Measurement>>;
   /**
    * Returns an url that can be used to render or download the report as PDF.
-   * @see TODO -> pdf example
+   * @see https://docs.fibricheck.com/examples#requesting-a-measurement-report-and-rendering-pdf
    * @returns {string} url
    */
   getReportUrl: (measurementId: string) => Promise<string>;
