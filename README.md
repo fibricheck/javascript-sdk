@@ -50,6 +50,13 @@ import client from "@fibricheck/javascript-sdk";
 })();
 ```
 
+| Name | Default | Description |
+| -- | -- | -- |
+| `env` | `dev` | Specifies whether you want to connect to the `dev` environment or `production` |
+| `consumerKey` |  | <b>Required</b>. Your application's `consumerKey` |
+| `consumerSecret` |  | <b>Required</b>. Your application's `consumerSecret` |
+
+
 ## API
 
 When you initialize the sdk, the returned object will have the following interface. These descriptions and signatures are also available as inline JSDoc in your IDE. 
