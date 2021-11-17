@@ -1,6 +1,6 @@
 {
   "name": "@fibricheck/javascript-sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Fibricheck API client for JavaScript/TypeScript ",
   "main": "build/index.cjs.js",
   "types": "build/types/index.d.ts",
