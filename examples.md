@@ -15,7 +15,6 @@ You can use your email/password combination initially to retrieve an OAuth1 toke
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 (async () => {
-
   const sdk = client({
     consumerKey: '',
     consumerSecret: '',
@@ -27,7 +26,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
   });
 
   AsyncStorage.setItem('tokenData', JSON.stringify(tokenData));
-
 })();
 ```
 
@@ -36,7 +34,6 @@ Afterwards you can use the stored tokenData to authenticate.
 ```typescript
 import AsyncStorage from '@react-native-async-storage/async-storage';
 (async () => {
-
   const tokenDataString = await AsyncStorage.getItem('tokenData');
   const tokenData = JSON.parse(tokenDataString);
 
@@ -44,7 +41,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
     token: tokenData.key,
     tokenSecret: tokenData.secret,
   });
-
 })();
 ```
 
@@ -68,19 +64,20 @@ await sdk.authenticate({
 });
 
 const App = () => {
-
   return (
     <RNFibriCheckView
-      onHeartBeat={heartRate => {
+      flashEnabled
+      style={{ flex: 1 }}
+      onHeartBeat={(heartRate) => {
         console.log('heartRate', heartRate);
       }}
-      onTimeRemaining={seconds => {
+      onTimeRemaining={(seconds) => {
         console.log('onTimeRemaining', seconds);
       }}
-      onMeasurementProcessed={async cameraData => {
+      onMeasurementProcessed={async (cameraData) => {
         console.log('onMeasurementProcessed', cameraData);
         const measurement = await sdk.postMeasurement(cameraData);
-        console.log('measurement',measurement);
+        console.log('measurement', measurement);
       }}
       onFingerDetected={() => {
         console.log('finger detected');
@@ -111,8 +108,8 @@ const user = await sdk.register({
   birthDay: '1970/01/01',
   gender: 0, // 0 = Not known; 1 = Male; 2 = Female; 9 = Not applicable
   country: 'JO', // or 'AE'
-  language: 'AR'
-})
+  language: 'AR',
+});
 ```
 
 ## Legal documents updated
@@ -127,27 +124,29 @@ const sdk = client({
   consumerSecret: '',
 });
 
-await sdk.authenticate({
-  password: '',
-  username: '',
-}, function onConsentNeeded(legalDocumentsUpdated) {
-  /* Will return an array of objects with a key, version and url.
-  * ie. 
-  *   [{ 
-  *     key: 'privacyPolicy',
-  *     version: '1.5.0', 
-  *     url: 'https://fibricheck.com/privacyPolicy/150'
-  *   }]
-  */
+await sdk.authenticate(
+  {
+    password: '',
+    username: '',
+  },
+  function onConsentNeeded(legalDocumentsUpdated) {
+    /* Will return an array of objects with a key, version and url.
+     * ie.
+     *   [{
+     *     key: 'privacyPolicy',
+     *     version: '1.5.0',
+     *     url: 'https://fibricheck.com/privacyPolicy/150'
+     *   }]
+     */
 
-  legalDocumentsUpdated.forEach(document => {
-    // 1. Request approval from the user
+    legalDocumentsUpdated.forEach((document) => {
+      // 1. Request approval from the user
 
-    // 2. Pass the document back to the sdk
-    sdk.giveConsent(document);
-  });
-
-});
+      // 2. Pass the document back to the sdk
+      sdk.giveConsent(document);
+    });
+  },
+);
 ```
 
 ## Fetching one measurement
@@ -156,7 +155,6 @@ Use the `sdk.getMeasurement` function to get a single measurement based on a id.
 
 ```typescript
 import client from '@fibricheck/javascript-sdk';
-
 
 const sdk = client({
   consumerKey: '',
@@ -200,8 +198,8 @@ const nextMeasurements = await measurements.next();
 
 The `sdk.getReportUrl` accepts a `measurementId` and will handle creation / fetching of the report. This function works great in combination with `react-native-pdf` or `react-native-share`
 
-* first time calling this function for a measurement, it will take a little longer as the cloud service will render the report. Once it is ready (\~5s) the url where you can fetch it will be returned
-* subsequent calls will be much faster, as the report is already rendered and the url will be returned almost instantly.
+- first time calling this function for a measurement, it will take a little longer as the cloud service will render the report. Once it is ready (\~5s) the url where you can fetch it will be returned
+- subsequent calls will be much faster, as the report is already rendered and the url will be returned almost instantly.
 
 ```typescript
 import client from '@fibricheck/javascript-sdk';
@@ -220,21 +218,21 @@ await sdk.authenticate({
 const measurementId = '0000';
 
 const App = () => {
-  const [uri,setUri] = useState();
+  const [uri, setUri] = useState();
 
-  useEffect(()=> {
-    (async ()=> {
+  useEffect(() => {
+    (async () => {
       const uri = await sdk.getReportUrl(measurementId);
-      setUri(uri)
+      setUri(uri);
     })();
-  },[])
+  }, []);
 
   return (
     <Pdf
       source={{
-        uri
+        uri,
       }}
     />
   );
-}
+};
 ```

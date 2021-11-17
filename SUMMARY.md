@@ -1,5 +1,4 @@
 # Table of contents
 
-* [Getting Started](README.md)
-* [Getting Started](readme-1.md)
-* [Examples](examples.md)
+- [Getting Started](README.md)
+- [Examples](examples.md)
