@@ -45,7 +45,6 @@
   },
   "dependencies": {
     "@extrahorizon/javascript-sdk": "^5.2.0-dev.153",
-    "@fibricheck/react-native-camera-sdk": "^0.0.20",
     "react-native-device-info": "^8.4.5"
   }
 }

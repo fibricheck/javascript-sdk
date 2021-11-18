@@ -346,11 +346,6 @@
     platform-specific "^1.1.0"
     ts-toolbelt "^9.6.0"
 
-"@fibricheck/react-native-camera-sdk@^0.0.20":
-  version "0.0.20"
-  resolved "https://npm.pkg.github.com/download/@fibricheck/react-native-camera-sdk/0.0.20/4bcd16b6149c651f18bc545d878f23f364a27076840f5ca95c78e87e278dee9b#d4dd36031723fe09d1409d442dcc973b5508a0c9"
-  integrity sha512-MaeHi07AbObnYym7iJ2XcD56FEsu0IHuWllJcx5xc94EIb54RvzpSkTngdRS8FMgztCFmiHuq19VeAQ9bO8yJg==
-
 "@humanwhocodes/config-array@^0.6.0":
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.6.0.tgz#b5621fdb3b32309d2d16575456cbc277fa8f021a"
