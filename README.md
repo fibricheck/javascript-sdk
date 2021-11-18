@@ -21,13 +21,13 @@ Explanation from GitHub on how to add your token can be found [here](https://doc
 Using npm:
 
 ```shell
-npm install @fibricheck/javascript-sdk
+npm install --save @fibricheck/javascript-sdk react-native-device-info
 ```
 
 Using yarn:
 
 ```shell
-yarn add @fibricheck/javascript-sdk
+yarn add @fibricheck/javascript-sdk react-native-device-info
 ```
 
 ## Quick Start
@@ -35,17 +35,17 @@ yarn add @fibricheck/javascript-sdk
 To be able to receive data from the FibriCheck cloud services, an app should authenticate with a username/password or token/tokenSecret combination.
 
 ```javascript
-import client from "@fibricheck/javascript-sdk";
+import client from '@fibricheck/javascript-sdk';
 
 (async () => {
   const sdk = client({
-    consumerKey: "",
-    consumerSecret: "",
+    consumerKey: '',
+    consumerSecret: '',
   });
 
   await sdk.authenticate({
-    username: "",
-    password: "",
+    username: '',
+    password: '',
   });
 })();
 ```
@@ -74,7 +74,7 @@ interface FibricheckSDK {
    */
   authenticate(
     credentials: ParamsOauth1WithToken,
-    onConsentNeeded: (data: Consent[]) => void
+    onConsentNeeded: (data: Consent[]) => void,
   ): Promise<TokenDataOauth1>;
   /**
    * Use password authentication.
@@ -82,7 +82,7 @@ interface FibricheckSDK {
    */
   authenticate(
     credentials: ParamsOauth1WithEmail,
-    onConsentNeeded: (data: Consent[]) => void
+    onConsentNeeded: (data: Consent[]) => void,
   ): Promise<TokenDataOauth1>;
   /**
    *  Logout
@@ -91,12 +91,12 @@ interface FibricheckSDK {
   /**
    * Return documents received from the `onConsentNeeded` callback on authentication after the user has approved them.
    */
-  giveConsent: (data: Omit<Consent, "url">) => Promise<AffectedRecords>;
+  giveConsent: (data: Omit<Consent, 'url'>) => Promise<AffectedRecords>;
   /**
    * Send a measurement to the cloud.
    */
   postMeasurement: (
-    measurement: MeasurementCreationData
+    measurement: MeasurementCreationData,
   ) => Promise<Measurement>;
   /**
    * Gets a measurement by measurementId
