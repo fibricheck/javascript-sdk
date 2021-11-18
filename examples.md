@@ -44,7 +44,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 })();
 ```
 
-## Camera SDK component to make a measurement
+## Perform a measurement with the Camera SDK component
 
 You can use the `RNFibriCheckView` exported from the `@fibricheck/react-native-camera-sdk` package to perform a measurement and hook up `sdk.postMeasurement` to post the data returned from the camera to the backend in the `onMeasurementProcessed` event.
 
@@ -66,8 +66,6 @@ await sdk.authenticate({
 const App = () => {
   return (
     <RNFibriCheckView
-      flashEnabled
-      style={{ flex: 1 }}
       onHeartBeat={(heartRate) => {
         console.log('heartRate', heartRate);
       }}
@@ -87,7 +85,7 @@ const App = () => {
 };
 ```
 
-## Registration
+## Register a new user
 
 The following snippet shows how you can register a new user. You do not need authentication for registration.
 
@@ -112,7 +110,7 @@ const user = await sdk.register({
 });
 ```
 
-## Legal documents updated
+## Check for updated legal documents
 
 When you use the `authentication` function, the second parameter should be a callback function (this can also be an arrow function). This function will be called when legal documents have been updated in the FibriCheck cloud and the end-user needs to reapprove these. Example showing how to hook changes to legal documents change with your application and calling the `giveConsent` function with the document after the user has approved these.
 
@@ -149,7 +147,7 @@ await sdk.authenticate(
 );
 ```
 
-## Fetching one measurement
+## Fetch a measurement
 
 Use the `sdk.getMeasurement` function to get a single measurement based on a id. Only measurements for the currently authenticated user can be requested.
 
@@ -194,12 +192,12 @@ const measurements = await sdk.getMeasurements();
 const nextMeasurements = await measurements.next();
 ```
 
-## Requesting a measurement report and rendering PDF
+## Request a measurement report and render the PDF
 
 The `sdk.getReportUrl` accepts a `measurementId` and will handle creation / fetching of the report. This function works great in combination with `react-native-pdf` or `react-native-share`
 
-- first time calling this function for a measurement, it will take a little longer as the cloud service will render the report. Once it is ready (\~5s) the url where you can fetch it will be returned
-- subsequent calls will be much faster, as the report is already rendered and the url will be returned almost instantly.
+* first time calling this function for a measurement, it will take a little longer as the cloud service will render the report. Once it is ready (\~5s) the url where you can fetch it will be returned
+* subsequent calls will be much faster, as the report is already rendered and the url will be returned almost instantly.
 
 ```typescript
 import client from '@fibricheck/javascript-sdk';

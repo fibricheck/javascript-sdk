@@ -1,4 +1,5 @@
 # Table of contents
 
-- [Getting Started](README.md)
-- [Examples](examples.md)
+* [Getting Started](README.md)
+* [Measurement Structure](measurement-structure.md)
+* [Examples](examples.md)
