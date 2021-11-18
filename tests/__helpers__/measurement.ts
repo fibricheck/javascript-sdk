@@ -1,4 +1,4 @@
-import { CameraData } from '@fibricheck/react-native-camera-sdk';
+import { CameraData } from '../../src/types/measurement'
 import DeviceInfo from 'react-native-device-info';
 
 export const mockSchemas = [{
@@ -16,7 +16,7 @@ export const cameraResult: CameraData = {
   },
   time: [],
   yList: [],
-  measurementTimestamp: new Date(),
+  measurement_timestamp: Date.now(),
 };
 
 export const mockDevice = {
