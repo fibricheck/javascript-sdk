@@ -135,7 +135,7 @@ await sdk.authenticate({
           name: 'mobile-spot-check',
           version: DeviceInfo.getVersion(),
         },
-        tags: [ 'FibriCheck-sdk']
+        tags: ['FibriCheck-sdk'],
       });
 
       return result as Measurement;
