@@ -24,6 +24,7 @@ describe('measurement', () => {
       ...cameraResult,
       app: mockApp,
       device: mockDevice,
+      tags: ['FibriCheck-sdk'],
     });
   });
 
