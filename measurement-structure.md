@@ -1,7 +1,7 @@
 ---
 description: >-
   The complete structure is exported as a type: `Measurement` in the SDK. For
-  completeness, we will explain some parts more in detail here
+  completeness, we will explain some parts more in detail here.
 ---
 
 # Measurement Structure
@@ -10,7 +10,7 @@ description: >-
 
 ### CameraData
 
-This snippet shows the interface that is implemented when performing a measuremnt via the `react-native-camera-sdk`. This way, you don't have to worry about population these fields.
+This snippet shows the interface that is implemented when performing a measuremnt via the `react-native-camera-sdk`. This way, you don't have to worry about populating these fields.
 
 ```
 interface CameraData {
@@ -66,7 +66,7 @@ interface MeasurementContext {
 
 ### Indicator
 
-This value represents the indicator that the FibriCheck algo has given to the measurement. When the `status` is `reviewed`, it means this indicator is validated by a medical professional. Possible values are `'normal' | 'quality' | 'urgent' | 'warning'`
+This value represents the indicator that the FibriCheck algorithm has given to the measurement. When the `status` is `reviewed`, it means this indicator is validated by a medical professional. Possible values are `'normal' | 'quality' | 'urgent' | 'warning'`
 
 ### Status
 
