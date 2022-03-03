@@ -85,6 +85,8 @@ const App = () => {
 };
 ```
 
+In some rare cases, it can occur that the motion sensors don't provide the correct data. In such cases, the movement detection will kick in, although the user is not moving. A way to fix this, is to disable the motion sensors by setting the `movementDetectionEnabled` to false on for example a `onLongPress`
+
 ## Register a new user
 
 The following snippet shows how you can register a new user. You do not need authentication for registration.

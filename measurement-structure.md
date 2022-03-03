@@ -90,7 +90,31 @@ A measurement can have multiple statuses, depending in which phase of the review
 A measurement can have multiple diagnoses, to get the most severe diagnosis, you can use the `getMostSevereLabel` function. Possible values of this diagnose are:&#x20;
 
 ```
-  'sinus_arrhythmia' | 'extrasystoles_trig_episode'  | 'other'  | 'undiagnosable'  | 'extrasystoles_isolated'  | 'dubious_rhythm'  | 'extrasystoles'  | 'extrasystoles_trigeminy'  | 'tachy_episode'  | 'extrasystoles_frequent'  | 'phone_incompatible'  | 'extrasystoles_big_episode'  | 'increased_hrv'  | 'sinus'  | 'atrial_flutter'  | 'brady_episode'  | 'tachycardia'  | 'extrasystoles_bigminy'  | 'tachy_arrhytmia'  | 'pacemaker_rhythm'  | 'bradycardia'  | 'brady_arrhytmia'  | 'quality_to_low'  | 'atrial_fibrillation'  | 'no_diagnosis';
+  'sinus_arrhythmia'
+  'extrasystoles_trig_episode'
+  'undiagnosable'
+  'extrasystoles_isolated'
+  'dubious_rhythm'
+  'extrasystoles'
+  'extrasystoles_trigeminy'
+  'tachy_episode'
+  'extrasystoles_frequent'
+  'phone_incompatible'
+  'extrasystoles_big_episode'
+  'increased_hrv'
+  'sinus'
+  'atrial_flutter'
+  'brady_episode'
+  'tachycardia'
+  'extrasystoles_bigminy'
+  'tachy_arrhytmia'
+  'pacemaker_rhythm'
+  'bradycardia'
+  'brady_arrhytmia'
+  'quality_to_low'
+  'atrial_fibrillation'
+  'other' 
+  'no_diagnosis'
 ```
 
 ### Heart rate
