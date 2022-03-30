@@ -1,17 +1,18 @@
-import { createOAuth1Client, PagedResultWithPager, ParamsOauth1, rqlBuilder, Schema, UserData, UserNotAuthenticatedError } from '@extrahorizon/javascript-sdk';
+import { createOAuth1Client, findAllIterator, OptionsWithRql, PagedResult, PagedResultWithPager, ParamsOauth1, rqlBuilder, Schema, UserData, UserNotAuthenticatedError } from '@extrahorizon/javascript-sdk';
 import DeviceInfo from 'react-native-device-info';
-import { DEV_HOST, PRODUCTION_HOST, REQUIRED_DOCUMENTS, SCHEMA_NAMES } from './constants';
+import { API_SERVICES, DEV_HOST, PRODUCTION_HOST, REQUIRED_DOCUMENTS, SCHEMA_NAMES } from './constants';
 import { retryUntil } from './helpers';
 import { FibricheckSDK, Consent } from './types';
 import { GeneralConfiguration, UserConfiguration } from './types/configuration';
 import { Measurement, MeasurementResponseData } from './types/measurement';
-import { ReportDocument, ReportDocumentData } from './types/report';
+import { Prescription, PRESCRIPTION_STATUS } from './types/prescription';
+import { PeriodicReport, ReportDocument, ReportDocumentData, REPORT_STATUS } from './types/report';
 
 type Env = 'dev' | 'production';
 type Config = { env?: Env; } & Pick<ParamsOauth1, 'consumerKey' | 'consumerSecret'>
 /* function to parse a string like '1.5.0' to something like 'v150'
  * '1.5.0' format comes from the current documents
- * 'v150' format comes from the user's currenctly signed versions
+ * 'v150' format comes from the user's currently signed versions
  */
 
 export const documentVersionParse = (value: string) => `v${value.replace(/\./g, '')}`;
@@ -126,23 +127,25 @@ await sdk.authenticate({
       const result = await exhSdk.data.documents.create<MeasurementResponseData>(schema.id as string, {
         ...measurement,
         device: {
-          os: DeviceInfo.getSystemName(),
+          os: DeviceInfo.getSystemVersion(),
           model: DeviceInfo.getModel(),
-          brand: DeviceInfo.getBrand(),
+          manufacturer: DeviceInfo.getBrand(),
+          type: await DeviceInfo.getAndroidId() ? "android" : "ios" // TODO Check if this works
         },
         app: {
           build: Number(DeviceInfo.getBuildNumber()),
           name: 'mobile-spot-check',
           version: DeviceInfo.getVersion(),
+          // TODO camera_sdk_version and fibricheck_sdk_version should come here.. What is the best way to do this?
         },
         tags: ['FibriCheck-sdk'],
       });
 
       return result as Measurement;
     },
-    getMeasurement: async measurmentId => {
+    getMeasurement: async measurementId => {
       const schema = await getSchemaById(SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS);
-      return await exhSdk.data.documents.findById<MeasurementResponseData>(schema.id as string, measurmentId) as Measurement;
+      return await exhSdk.data.documents.findById<MeasurementResponseData>(schema.id as string, measurementId) as Measurement;
     },
     getMeasurements: async () => {
       const schema = await getSchemaById(SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS);
@@ -150,7 +153,7 @@ await sdk.authenticate({
       const rql = rqlBuilder().eq('creatorId', userId).build();
       return await exhSdk.data.documents.find<MeasurementResponseData>(schema?.id as string, { rql }) as PagedResultWithPager<Measurement>;
     },
-    getReportUrl: async measurementId => {
+    getMeasurementReportUrl: async measurementId => {
       const schema = await getSchemaById(SCHEMA_NAMES.MEASUREMENT_REPORTS);
       let report = await exhSdk.data.documents.findFirst<ReportDocumentData>(schema.id as string, {
         rql: rqlBuilder()
@@ -159,7 +162,7 @@ await sdk.authenticate({
       }) as ReportDocument;
 
       // report exists and is rendered. Return current report url
-      if (report?.status === 'rendered') {
+      if (report?.status === REPORT_STATUS.rendered) {
         return `https://${host}/files/v1/${report?.data?.readFileToken}/file`;
       }
 
@@ -179,12 +182,63 @@ await sdk.authenticate({
         async () => await exhSdk.data.documents.findById<ReportDocumentData>(
           schema.id as string,
           report.id as string,
-          { rql: rqlBuilder().eq('status', 'rendered').build() }
+          { rql: rqlBuilder().eq('status', REPORT_STATUS.rendered).build() }
         ),
         (value: ReportDocument) => !!value
       );
 
       return `https://${host}/files/v1/${result?.data?.readFileToken}/file`;
     },
+    getPeriodicReports: async () => {
+      // TODO Document that the trigger defines the type of periodic report (END, WEEKLY, MONTHLY)
+      const userId = await exhSdk.raw.userId as string;
+
+      const rql = rqlBuilder()
+        .eq('user_id', userId)
+        .out('trigger', ['MANUAL'])
+        .eq('status', REPORT_STATUS.COMPLETE)
+        .sort('-creation_timestamp')
+        .build();
+
+      const find = async (options: OptionsWithRql) => (await (exhSdk.raw.get<PagedResult<PeriodicReport>>(`${API_SERVICES.REPORTS}/${options.rql}`))).data;
+
+      const iterator = findAllIterator<PeriodicReport>(find, { rql });
+
+      return iterator;
+    },
+    activateHash: async hash => {
+      const { data: prescription } = await exhSdk.raw.get<Prescription>(
+        `${API_SERVICES.PRESCRIPTIONS}/${hash}`,
+      );
+
+      switch (prescription.status) {
+        case PRESCRIPTION_STATUS.ACTIVATED:
+          throw new Error('alreadyActivated');
+        case PRESCRIPTION_STATUS.NOT_PAID:
+          throw new Error('notPaid');
+        case PRESCRIPTION_STATUS.PAID_BY_USER:
+        case PRESCRIPTION_STATUS.PAID_BY_GROUP:
+        case PRESCRIPTION_STATUS.FREE:
+        default: {
+          if (!prescription.userId) {
+            // Link prescription to user
+            await exhSdk.raw.get(`${API_SERVICES.PRESCRIPTIONS}/${hash}/scan`);
+          }
+          await exhSdk.raw.get(
+            `${API_SERVICES.PRESCRIPTIONS}/${prescription.hash}/activate`,
+          );
+        }
+      }
+    },
+    getPeriodicReportPdf: async reportId => {
+      // TODO: Add to docs a way to convert this 
+      // Example as seen in useReport:31 in the FC RN app
+      const file = await exhSdk.raw.get(`/reports/v1/${reportId}/pdf`, {
+        responseType: 'arraybuffer',
+      });
+      
+      return file.data;
+    }
   };
 };
+

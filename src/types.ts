@@ -9,10 +9,17 @@ import {
 } from '@extrahorizon/javascript-sdk';
 
 import { Measurement, MeasurementCreationData } from './types/measurement';
+import { PeriodicReport } from './types/report';
 
 export type UserRegisterData = RegisterUserData;
 
 export type LegalDocumentKey = 'privacyPolicy' | 'termsOfUse';
+
+export type FindAllIterator<T> = AsyncGenerator<
+  PagedResult<T>,
+  Record<string, never>,
+  void
+>;
 
 export interface Consent {
   key: LegalDocumentKey;
@@ -107,5 +114,22 @@ export interface FibricheckSDK {
    * @see https://docs.fibricheck.com/examples#requesting-a-measurement-report-and-rendering-pdf
    * @returns {string} url
    */
-  getReportUrl: (measurementId: string) => Promise<string>;
+  // TODO Add new functions to docs + document name change
+  getMeasurementReportUrl: (measurementId: string) => Promise<string>;
+  /**
+   * Gets a list of periodic reports
+   * @returns {FindAllIterator<PeriodicReport>} periodReports
+   */ 
+   getPeriodicReports: () => Promise<FindAllIterator<PeriodicReport>>;
+   /**
+   * Get the pdf of a periodic report
+   * @returns {pdf} pdf
+   */ 
+    getPeriodicReportPdf: (reportId: string) => Promise<void>;
+  /**
+   * Activates a given hash, so the user can perform a measurement
+   * @throws {alreadyActivated}
+   * @throws {notPaid}
+   */ 
+   activateHash: (hash: string) => Promise<void>;
 }

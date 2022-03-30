@@ -332,10 +332,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@extrahorizon/javascript-sdk@^5.2.0-dev.153":
-  version "5.2.0-dev.153"
-  resolved "https://npm.pkg.github.com/download/@extrahorizon/javascript-sdk/5.2.0-dev.153/99b97a8b83bb2834c9e048c176c3a7d9afd3b75f881623ad8f57be7b8d8549ef#84393dddcd05b8227a0a9b99e67aa00cc0bb6e63"
-  integrity sha512-xb7MSwZHuGNPBHZvRv37hk09olZb1QBO6zpwhtASpT5jxcW1ZJLUXd0dWWI2YyTB7QBGBHAd6zVyvj/Fgd72pw==
+"@extrahorizon/javascript-sdk@^6.1.1":
+  version "6.1.1"
+  resolved "https://npm.pkg.github.com/download/@extrahorizon/javascript-sdk/6.1.1/128569b11fb9b1ebbff1a947ce1499ee45bdc3e64650fcccd55b166beee8b25e#8ef9c2582b5a84aa40939d8401e1ebd54334b9c3"
+  integrity sha512-RTn+G33Mkrj6g6Tccn+dR4Y/bkbrvAlgp7hV4WA3IaF3bTkmKFHDkaeHLLjPuLjjd3FOXV11DNWgY1IoGCEljg==
   dependencies:
     axios "^0.21.4"
     buffer "^6.0.3"
@@ -345,6 +345,7 @@
     pako "^2.0.3"
     platform-specific "^1.1.0"
     ts-toolbelt "^9.6.0"
+    typescript-json-decoder "^1.0.6"
 
 "@humanwhocodes/config-array@^0.6.0":
   version "0.6.0"
@@ -4113,6 +4114,11 @@ typedarray-to-buffer@^3.1.5:
   integrity sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q==
   dependencies:
     is-typedarray "^1.0.0"
+
+typescript-json-decoder@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/typescript-json-decoder/-/typescript-json-decoder-1.0.6.tgz#f5a44c163d9bba8fc5b46881fa5cc823d840c97d"
+  integrity sha512-acSpXrCf7LTEolJbqQDo6eP7h/mpO2u9VGJB4N6WvTcvKQdBIvHOXImXibn7N93kVwIoJbdikAOFdD8VDoeJaQ==
 
 typescript@^4.4.4:
   version "4.4.4"

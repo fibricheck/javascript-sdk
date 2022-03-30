@@ -9,6 +9,13 @@ export const SCHEMA_NAMES = {
   MEASUREMENT_REPORTS: 'measurement-reports',
 } as const;
 
+export const API_SERVICES =  {
+  PRESCRIPTIONS: '/prescriptions/v1',
+  FILES: '/files/v1',
+  REPORTS: '/reports/v1',
+  GROUPS: '/groups/v1',
+}
+
 // These are sorted from least severe to most severe
 export const LABEL_SEVERITY: MeasurementDiagnosis[] = [
   // These exist in the schema but are no longer used

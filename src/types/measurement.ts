@@ -105,6 +105,10 @@ interface Device {
 interface App {
   name: string;
   version: string;
+  build?: number;
+  branch?: string;
+  camera_sdk_version?: string;
+  fibricheck_sdk_version?: string;
 }
 
 /* eslint-disable camelcase */
@@ -167,6 +171,7 @@ export type MeasurementResponseData = MeasurementCreationData & {
   indicator?: Indicator;
   algoAnalysis?: AlgoAnalysis;
   review_type?: ReviewType;
+  tags: string[];
 };
 
 export type Measurement = Document<MeasurementResponseData> & {
