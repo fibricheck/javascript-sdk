@@ -30,6 +30,10 @@ Using yarn:
 yarn add @fibricheck/javascript-sdk
 ```
 
+## Documentation
+
+You can find the latest documentation and examples on [https://docs.fibricheck.com](https://docs.fibricheck.com/).
+
 ## Quick Start
 
 ```javascript

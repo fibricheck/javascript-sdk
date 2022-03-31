@@ -1,5 +1,6 @@
-import { CameraData } from '../../src/types/measurement'
 import DeviceInfo from 'react-native-device-info';
+import { CameraData } from '../../src/types/measurement';
+import { version } from '../../package.json';
 
 export const mockSchemas = [{
   id: 'fibricheck-measurements',
@@ -22,11 +23,14 @@ export const cameraResult: CameraData = {
 export const mockDevice = {
   os: DeviceInfo.getSystemName(),
   model: DeviceInfo.getModel(),
-  brand: DeviceInfo.getBrand(),
+  manufacturer: DeviceInfo.getBrand(),
+  type: 'ios',
 };
 
 export const mockApp = {
   build: Number(DeviceInfo.getBuildNumber()),
   name: 'mobile-spot-check',
   version: DeviceInfo.getVersion(),
+  camera_sdk_version: '1.0.0',
+  fibricheck_sdk_version: version,
 };
