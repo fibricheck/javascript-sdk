@@ -20,7 +20,7 @@ describe('report', () => {
   it('should get a report url for existing report', async () => {
     mockSdk.data.documents.findFirst.mockResolvedValue({ id: 'reportId', status: 'rendered', data: { readFileToken: 'token' } });
 
-    const reportUrl = await sdk.getReportUrl('measurementId');
+    const reportUrl = await sdk.getMeasurementReportUrl('measurementId');
 
     expect(reportUrl).toBe('https://api.fibricheck.com/files/v1/token/file');
   });
@@ -36,7 +36,7 @@ describe('report', () => {
       data: { readFileToken: 'token' },
     });
 
-    const reportUrl = await sdk.getReportUrl('measurementId');
+    const reportUrl = await sdk.getMeasurementReportUrl('measurementId');
 
     expect(reportUrl).toBe('https://api.fibricheck.com/files/v1/token/file');
   });

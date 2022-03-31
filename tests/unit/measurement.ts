@@ -18,7 +18,7 @@ describe('measurement', () => {
   });
 
   it('should post a measurement', async () => {
-    await sdk.postMeasurement(cameraResult);
+    await sdk.postMeasurement(cameraResult, '1.0.0');
 
     expect(mockSdk.data.documents.create).toBeCalledWith('fibricheck-measurements', {
       ...cameraResult,
