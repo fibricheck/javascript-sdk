@@ -48,6 +48,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 You can use the `RNFibriCheckView` exported from the `@fibricheck/react-native-camera-sdk` package to perform a measurement and hook up `sdk.postMeasurement` to post the data returned from the camera to the backend in the `onMeasurementProcessed` event.
 
+* It is highly recommended to provide the camera sdk version as a second argument, as shown in the example.
+
 ```typescript
 import client from '@fibricheck/javascript-sdk';
 import { RNFibriCheckView } from '@fibricheck/react-native-camera-sdk';
@@ -74,7 +76,7 @@ const App = () => {
       }}
       onMeasurementProcessed={async (cameraData) => {
         console.log('onMeasurementProcessed', cameraData);
-        const measurement = await sdk.postMeasurement(cameraData);
+        const measurement = await sdk.postMeasurement(cameraData, RNFibriCheckView.version);
         console.log('measurement', measurement);
       }}
       onFingerDetected={() => {
