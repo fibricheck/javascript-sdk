@@ -200,6 +200,7 @@ The `sdk.getMeasurementReportUrl` accepts a `measurementId` and will handle crea
 
 * First time calling this function for a measurement, it will take a little longer as the cloud service will render the report. Once it's ready (\~5s) the url where you can fetch it will be returned
 * Subsequent calls will be much faster, as the report is already rendered and the url will be returned almost instantly.
+* The pdf will always be rendered in the language of the user (this language is specified during [#register-a-new-user](examples.md#register-a-new-user "mention"))
 
 ```typescript
 import client from '@fibricheck/javascript-sdk';
@@ -275,8 +276,10 @@ for await (const reportsPage of reportsIterator) {
 
 ## Request a periodic report in PDF-format
 
-The `sdk.getPeriodicReportPdf` method will retrieve a pdf-version of the periodic report.\
-This method takes the `reportId` as a parameter.
+The `sdk.getPeriodicReportPdf` method will retrieve a pdf-version of the periodic report.
+
+* This method takes the `reportId` as a parameter.
+* The pdf will always be rendered in the language of the user (this language is specified during [#register-a-new-user](examples.md#register-a-new-user "mention"))
 
 Here's an example of how to convert the response to a pdf using [react-native-share](https://github.com/react-native-share/react-native-share):
 
