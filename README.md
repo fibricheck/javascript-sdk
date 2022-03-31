@@ -6,7 +6,7 @@ To get started with the FibriCheck SDK you'll need to install it, and then get c
 
 ## Installation
 
-In your project, if you are using yarn or npm you need to create a file called `.npmrc` at the root level of your project and add these lines. Replace ${AUTH_TOKEN} with your personal access token. You can get a new one at [here](https://github.com/settings/tokens/new). Make sure you enable the `read:packages` scope.
+In your project, if you are using yarn or npm you need to create a file called `.npmrc` at the root level of your project and add these lines. Replace ${AUTH\_TOKEN} with your personal access token. You can get a new one at [here](https://github.com/settings/tokens/new). Make sure you enable the `read:packages` scope.
 
 ```
 @extrahorizon:registry=https://npm.pkg.github.com
@@ -52,11 +52,11 @@ import client from '@fibricheck/javascript-sdk';
 
 The client method (default export) supports several options you may set to achieve the expected behavior:
 
-| Name             | Default | Description                                          |
-| ---------------- | ------- | ---------------------------------------------------- |
-| `env`            | `dev`   | Specifies the environment you connect to             |
-| `consumerKey`    |         | <b>Required</b>. Your application's `consumerKey`    |
-| `consumerSecret` |         | <b>Required</b>. Your application's `consumerSecret` |
+| Name             | Default | Description                                       |
+| ---------------- | ------- | ------------------------------------------------- |
+| `env`            | `dev`   | Specifies the environment you connect to          |
+| `consumerKey`    |         | **Required**. Your application's `consumerKey`    |
+| `consumerSecret` |         | **Required**. Your application's `consumerSecret` |
 
 ## API
 
@@ -109,6 +109,22 @@ interface FibricheckSDK {
   /**
    * Returns an url that can be used to render or download the report as PDF.
    */
-  getReportUrl: (measurementId: string) => Promise<string>;
+  getMeasurementReportUrl: (measurementId: string) => Promise<string>;
+  /**
+   * Gets a list of periodic reports
+   * @returns {FindAllIterator<PeriodicReport>} periodicReports
+   */
+  getPeriodicReports: () => Promise<FindAllIterator<PeriodicReport>>;
+  /**
+   * Get the pdf of a periodic report
+   * @returns {pdf} pdf
+   */
+  getPeriodicReportPdf: (reportId: string) => Promise<ArrayBuffer>;
+  /**
+   * Activates a given prescription hash, so the user can perform a measurement
+   * @throws {alreadyActivated}
+   * @throws {notPaid}
+   */
+  activatePrescription: (hash: string) => Promise<void>;
 }
 ```

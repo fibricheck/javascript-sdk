@@ -196,10 +196,10 @@ const nextMeasurements = await measurements.next();
 
 ## Request a measurement report and render the PDF
 
-The `sdk.getReportUrl` accepts a `measurementId` and will handle creation / fetching of the report. This function works great in combination with `react-native-pdf` or `react-native-share`
+The `sdk.getMeasurementReportUrl` accepts a `measurementId` and will handle creation / fetching of the report. This function works great in combination with `react-native-pdf` or `react-native-share`
 
-* first time calling this function for a measurement, it will take a little longer as the cloud service will render the report. Once it is ready (\~5s) the url where you can fetch it will be returned
-* subsequent calls will be much faster, as the report is already rendered and the url will be returned almost instantly.
+* First time calling this function for a measurement, it will take a little longer as the cloud service will render the report. Once it's ready (\~5s) the url where you can fetch it will be returned
+* Subsequent calls will be much faster, as the report is already rendered and the url will be returned almost instantly.
 
 ```typescript
 import client from '@fibricheck/javascript-sdk';
@@ -234,5 +234,96 @@ const App = () => {
       }}
     />
   );
-};
+};  
+```
+
+## Request all periodic reports
+
+The `sdk.getPeriodicReports` method will retrieve all your periodic reports.
+
+* This method is a [generator function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function\*) that returns an [iterator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators\_and\_Generators). This iterator can be called with `.next()` to retrieve the next 20 reports. Another way to do this, is by using the for await construction (as seen in the example)  &#x20;
+* In the periodic reports, the `trigger` field indicates for which period the report was made (7 days, 30 days or at the end of a prescription)
+
+**⚠️** To use this functionality, `@babel/plugin-proposal-async-generator-functions` is required. This plugin is included in `@babel/preset-env`.
+
+```typescript
+import client from '@fibricheck/javascript-sdk';
+
+interface PeriodicReport {
+  id: string;
+  status: string;
+  trigger: 'PERIOD_DAYS_PASSED_7' | 'PERIOD_DAYS_PASSED_30' | 'PRESCRIPTION_ENDED'; 
+  creationTimestamp: number;
+}
+
+const sdk = client({
+  consumerKey: '',
+  consumerSecret: '',
+});
+
+await sdk.authenticate({
+  token: '',
+  tokenSecret: '',
+});
+
+const reportsIterator = await sdk.getPeriodicReports();
+
+for await (const reportsPage of reportsIterator) {
+  ... /* PagedResult<PeriodReport> */
+}
+```
+
+## Request a periodic report in PDF-format
+
+The `sdk.getPeriodicReportPdf` method will retrieve a pdf-version of the periodic report.\
+This method takes the `reportId` as a parameter.
+
+Here's an example of how to convert the response to a pdf using [react-native-share](https://github.com/react-native-share/react-native-share):
+
+```typescript
+import client from '@fibricheck/javascript-sdk';
+import Share from 'react-native-share';
+
+const sdk = client({
+  consumerKey: '',
+  consumerSecret: '',
+});
+
+await sdk.authenticate({
+  token: '',
+  tokenSecret: '',
+});
+
+const report = await sdk.getPeriodicReportPdf('62441ce00000000000000000');
+const base64 = Buffer.from(file.data, 'binary').toString('base64');
+const file = `data:application/pdf;base64,${base64}`;
+const filename = file.headers['content-disposition'].split('filename="')[1].split('.pdf"')[0];
+
+await Share.open({
+  title: filename,
+  type: 'application/pdf',
+  filename: filename,
+  url: file,
+});
+```
+
+## Activating a prescription
+
+The `sdk.activatePrescription` method will link the prescription to the user and activate it.\
+This method takes the prescription's`hash` as a parameter.
+
+```tsx
+import client from '@fibricheck/javascript-sdk';
+
+const sdk = client({
+  consumerKey: '',
+  consumerSecret: '',
+});
+
+await sdk.authenticate({
+  token: '',
+  tokenSecret: '',
+});
+
+await sdk.activatePrescription('1234567890');
 ```

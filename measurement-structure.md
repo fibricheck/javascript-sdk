@@ -10,7 +10,7 @@ description: >-
 
 ### CameraData
 
-This snippet shows the interface that is implemented when performing a measuremnt via the `react-native-camera-sdk`. This way, you don't have to worry about populating these fields.
+This snippet shows the interface that is implemented when performing a measurement via the `react-native-camera-sdk`. This way, you don't have to worry about populating these fields.
 
 ```
 interface CameraData {
@@ -21,7 +21,7 @@ interface CameraData {
   heartrate: number;
   measurement_timestamp: number;
   quadrants: Yuv[][];
-  technicalDetails: {
+  technical_details: {
     camera_exposure_time: number;
     camera_hardware_level: string;
     camera_iso: number;
@@ -30,6 +30,9 @@ interface CameraData {
   yList: number[];
   abnormalities?: Abnormalities[];
   attempts?: number;
+  skippedPulseDetection: boolean;
+  skippedFingerDetection: boolean;
+  skippedMovementDetection: boolean;
 }
 ```
 
