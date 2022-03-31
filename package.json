@@ -1,9 +1,9 @@
 {
   "name": "@fibricheck/javascript-sdk",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "description": "Fibricheck API client for JavaScript/TypeScript ",
   "main": "build/index.cjs.js",
-  "types": "build/types/index.d.ts",
+  "types": "build/types/src/index.d.ts",
   "module": "build/index.mjs",
   "repository": "git@github.com:fibricheck/javascript-sdk.git",
   "author": "jens.verbeken@craftzing.com",
@@ -12,7 +12,7 @@
   "scripts": {
     "add-suffix": "node ./node_modules/npm-version-suffix/run-add-suffix.js",
     "clean": "rimraf build",
-    "lint": "eslint src/**/*.{ts,tsx}",
+    "lint": "eslint src/**/*.ts",
     "lint-fix": "yarn lint --quiet --fix",
     "build": "yarn clean && yarn build:library && yarn build:declarations",
     "build:library": "rollup --config rollup.config.js",
@@ -45,7 +45,7 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@extrahorizon/javascript-sdk": "^5.2.0-dev.153",
+    "@extrahorizon/javascript-sdk": "^6.1.1",
     "ramda": "^0.27.1",
     "react-native-device-info": "^8.4.5"
   }
