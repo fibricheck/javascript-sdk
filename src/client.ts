@@ -124,13 +124,14 @@ await sdk.authenticate({
     }),
     postMeasurement: async (measurement, cameraSdkVersion) => {
       const schema = await getSchemaById(SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS);
+      const androidId = await DeviceInfo.getAndroidId();
       const result = await exhSdk.data.documents.create<MeasurementResponseData>(schema.id as string, {
         ...measurement,
         device: {
           os: DeviceInfo.getSystemVersion(),
           model: DeviceInfo.getModel(),
           manufacturer: DeviceInfo.getBrand(),
-          type: await DeviceInfo.getAndroidId() ? 'android' : 'ios',
+          type: androidId && androidId !== 'unknown' ? 'android' : 'ios',
         },
         app: {
           build: Number(DeviceInfo.getBuildNumber()),

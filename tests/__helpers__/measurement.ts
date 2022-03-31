@@ -24,7 +24,7 @@ export const mockDevice = {
   os: DeviceInfo.getSystemName(),
   model: DeviceInfo.getModel(),
   manufacturer: DeviceInfo.getBrand(),
-  type: 'android',
+  type: 'ios',
 };
 
 export const mockApp = {
