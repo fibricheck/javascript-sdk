@@ -97,7 +97,7 @@ export interface FibricheckSDK {
    * @params {MeasurementCreationData} measurementData
    * @returns {Promise<Measurement>} measurement
    */
-  postMeasurement: (measurement: MeasurementCreationData) => Promise<Measurement>;
+  postMeasurement: (measurement: MeasurementCreationData, cameraSdkVersion?: string) => Promise<Measurement>;
   /**
    * Gets a measurement by measurementId
    * @param {string} measurementId
@@ -114,22 +114,21 @@ export interface FibricheckSDK {
    * @see https://docs.fibricheck.com/examples#requesting-a-measurement-report-and-rendering-pdf
    * @returns {string} url
    */
-  // TODO Add new functions to docs + document name change
   getMeasurementReportUrl: (measurementId: string) => Promise<string>;
   /**
    * Gets a list of periodic reports
-   * @returns {FindAllIterator<PeriodicReport>} periodReports
-   */ 
-   getPeriodicReports: () => Promise<FindAllIterator<PeriodicReport>>;
-   /**
+   * @returns {FindAllIterator<PeriodicReport>} periodicReports
+   */
+  getPeriodicReports: () => Promise<FindAllIterator<PeriodicReport>>;
+  /**
    * Get the pdf of a periodic report
    * @returns {pdf} pdf
-   */ 
-    getPeriodicReportPdf: (reportId: string) => Promise<void>;
+   */
+  getPeriodicReportPdf: (reportId: string) => Promise<ArrayBuffer>;
   /**
-   * Activates a given hash, so the user can perform a measurement
+   * Activates a prescription hash, so the user can perform a measurement
    * @throws {alreadyActivated}
    * @throws {notPaid}
-   */ 
-   activateHash: (hash: string) => Promise<void>;
+   */
+  activatePrescription: (hash: string) => Promise<void>;
 }

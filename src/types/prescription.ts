@@ -7,7 +7,7 @@ export enum PRESCRIPTION_STATUS {
   PAID_BY_GROUP = 'PAID_BY_GROUP',
   EXPIRED = 'EXPIRED',
   ACTIVATED = 'ACTIVATED',
-};
+}
 
 export interface Prescription {
   creationTimestamp: Date;
@@ -29,4 +29,4 @@ export interface Prescription {
   templateId: ObjectId;
   updateTimestamp: Date;
   userId: ObjectId;
-};
+}

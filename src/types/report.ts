@@ -17,9 +17,8 @@ export type ReportDocument = Document<ReportDocumentData> & {
 export interface PeriodicReport {
   id: string;
   status: string;
-  trigger: string;
+  trigger: 'PERIOD_DAYS_PASSED_7' | 'PERIOD_DAYS_PASSED_30' | 'PRESCRIPTION_ENDED';
   creationTimestamp: number;
-  // TODO Check casing
 }
 
 export const REPORT_STATUS = {

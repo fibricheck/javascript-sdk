@@ -7,6 +7,7 @@ import { GeneralConfiguration, UserConfiguration } from './types/configuration';
 import { Measurement, MeasurementResponseData } from './types/measurement';
 import { Prescription, PRESCRIPTION_STATUS } from './types/prescription';
 import { PeriodicReport, ReportDocument, ReportDocumentData, REPORT_STATUS } from './types/report';
+import { version as fibricheckSdkVersion } from '../package.json';
 
 type Env = 'dev' | 'production';
 type Config = { env?: Env; } & Pick<ParamsOauth1, 'consumerKey' | 'consumerSecret'>
@@ -35,7 +36,6 @@ export default (config: Config): FibricheckSDK => {
   const env: Env = config.env ?? 'production';
   const host = env === 'production' ? PRODUCTION_HOST : DEV_HOST;
   const exhSdk = createOAuth1Client({ host, ...config });
-
   const getSchemaById = (function getSchema() {
     let schemas: Record<string, Schema>;
 
@@ -122,7 +122,7 @@ await sdk.authenticate({
         },
       },
     }),
-    postMeasurement: async measurement => {
+    postMeasurement: async (measurement, cameraSdkVersion) => {
       const schema = await getSchemaById(SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS);
       const result = await exhSdk.data.documents.create<MeasurementResponseData>(schema.id as string, {
         ...measurement,
@@ -130,13 +130,14 @@ await sdk.authenticate({
           os: DeviceInfo.getSystemVersion(),
           model: DeviceInfo.getModel(),
           manufacturer: DeviceInfo.getBrand(),
-          type: await DeviceInfo.getAndroidId() ? "android" : "ios" // TODO Check if this works
+          type: await DeviceInfo.getAndroidId() ? 'android' : 'ios',
         },
         app: {
           build: Number(DeviceInfo.getBuildNumber()),
           name: 'mobile-spot-check',
           version: DeviceInfo.getVersion(),
-          // TODO camera_sdk_version and fibricheck_sdk_version should come here.. What is the best way to do this?
+          fibricheck_sdk_version: fibricheckSdkVersion,
+          camera_sdk_version: cameraSdkVersion,
         },
         tags: ['FibriCheck-sdk'],
       });
@@ -190,7 +191,6 @@ await sdk.authenticate({
       return `https://${host}/files/v1/${result?.data?.readFileToken}/file`;
     },
     getPeriodicReports: async () => {
-      // TODO Document that the trigger defines the type of periodic report (END, WEEKLY, MONTHLY)
       const userId = await exhSdk.raw.userId as string;
 
       const rql = rqlBuilder()
@@ -200,15 +200,16 @@ await sdk.authenticate({
         .sort('-creation_timestamp')
         .build();
 
-      const find = async (options: OptionsWithRql) => (await (exhSdk.raw.get<PagedResult<PeriodicReport>>(`${API_SERVICES.REPORTS}/${options.rql}`))).data;
+      const find = async (options: OptionsWithRql) => {
+        const { data } = await (exhSdk.raw.get<PagedResult<PeriodicReport>>(`${API_SERVICES.REPORTS}/${options.rql}`));
+        return data;
+      };
 
-      const iterator = findAllIterator<PeriodicReport>(find, { rql });
-
-      return iterator;
+      return findAllIterator<PeriodicReport>(find, { rql });
     },
-    activateHash: async hash => {
+    activatePrescription: async hash => {
       const { data: prescription } = await exhSdk.raw.get<Prescription>(
-        `${API_SERVICES.PRESCRIPTIONS}/${hash}`,
+        `${API_SERVICES.PRESCRIPTIONS}/${hash}`
       );
 
       switch (prescription.status) {
@@ -225,20 +226,16 @@ await sdk.authenticate({
             await exhSdk.raw.get(`${API_SERVICES.PRESCRIPTIONS}/${hash}/scan`);
           }
           await exhSdk.raw.get(
-            `${API_SERVICES.PRESCRIPTIONS}/${prescription.hash}/activate`,
+            `${API_SERVICES.PRESCRIPTIONS}/${prescription.hash}/activate`
           );
         }
       }
     },
     getPeriodicReportPdf: async reportId => {
-      // TODO: Add to docs a way to convert this 
-      // Example as seen in useReport:31 in the FC RN app
-      const file = await exhSdk.raw.get(`/reports/v1/${reportId}/pdf`, {
+      const response = await exhSdk.raw.get<ArrayBuffer>(`/reports/v1/${reportId}/pdf`, {
         responseType: 'arraybuffer',
       });
-      
-      return file.data;
-    }
+      return response.data;
+    },
   };
 };
-
