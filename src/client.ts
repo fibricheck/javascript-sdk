@@ -232,7 +232,8 @@ await sdk.authenticate({
       }
     },
     getPeriodicReportPdf: async reportId => {
-      const response = await exhSdk.raw.get<ArrayBuffer>(`/reports/v1/${reportId}/pdf`, {
+      const me = await exhSdk.users.me();
+      const response = await exhSdk.raw.get<ArrayBuffer>(`/reports/v1/${reportId}/pdf/${me.language}`, {
         responseType: 'arraybuffer',
       });
       return response.data;
