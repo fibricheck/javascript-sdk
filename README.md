@@ -52,11 +52,11 @@ import client from '@fibricheck/javascript-sdk';
 
 The client method (default export) supports several options you may set to achieve the expected behavior:
 
-| Name             | Default | Description                                       |
-| ---------------- | ------- | ------------------------------------------------- |
-| `env`            | `dev`   | Specifies the environment you connect to          |
-| `consumerKey`    |         | **Required**. Your application's `consumerKey`    |
-| `consumerSecret` |         | **Required**. Your application's `consumerSecret` |
+| Name             | Default      | Description                                       |
+| ---------------- | ------------ | ------------------------------------------------- |
+| `env`            | `production` | Specifies the environment you connect to          |
+| `consumerKey`    |              | **Required**. Your application's `consumerKey`    |
+| `consumerSecret` |              | **Required**. Your application's `consumerSecret` |
 
 ## API
 
