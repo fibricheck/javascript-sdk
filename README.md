@@ -85,7 +85,7 @@ interface FibricheckSDK {
     onConsentNeeded: (data: Consent[]) => void,
   ): Promise<TokenDataOauth1>;
   /**
-   *  Logout
+   *  Logout the current user
    */
   logout: () => boolean;
   /**
@@ -107,7 +107,7 @@ interface FibricheckSDK {
    */
   getMeasurements: () => Promise<PagedResult<Measurement>>;
   /**
-   * Returns an url that can be used to render or download the report as PDF.
+   * Returns a url that can be used to render or download the report as PDF.
    */
   getMeasurementReportUrl: (measurementId: string) => Promise<string>;
   /**
@@ -122,6 +122,7 @@ interface FibricheckSDK {
   getPeriodicReportPdf: (reportId: string) => Promise<ArrayBuffer>;
   /**
    * Activates a given prescription hash, so the user can perform a measurement
+   * A hash can only be used once per user
    * @throws {alreadyActivated}
    * @throws {notPaid}
    */
