@@ -49,11 +49,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 You can use the `RNFibriCheckView` exported from the `@fibricheck/react-native-camera-sdk` package to perform a measurement and hook up `sdk.postMeasurement` to post the data returned from the camera to the backend in the `onMeasurementProcessed` event.
 
 * It is highly recommended to provide the camera sdk version as a second argument, as shown in the example.
+* If you want to add a context to measurement, you need to add it before sending. We provided an example in the snippet below. The context is prefilled here, but needs to be completed by the user in the end product.
 
 ```typescript
 import client from '@fibricheck/javascript-sdk';
 import { RNFibriCheckView } from '@fibricheck/react-native-camera-sdk';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const sdk = client({
   consumerKey: '',
@@ -66,6 +67,23 @@ await sdk.authenticate({
 });
 
 const App = () => {
+  const [cameraData, setCameraData] = useState();
+  const [context, setContext] = useState({
+    symptoms: [
+      'lightheaded',
+      'confused'
+    ],
+    activity: 'sleeping',
+  });
+  
+  async function postMeasurement(cameraData, context) {
+    const measurement = {
+      ...cameraData,
+      context
+    };
+    await sdk.postMeasurement(measurement, RNFibriCheckView.version); 
+  }
+  
   return (
     <RNFibriCheckView
       onHeartBeat={(heartRate) => {
@@ -76,8 +94,7 @@ const App = () => {
       }}
       onMeasurementProcessed={async (cameraData) => {
         console.log('onMeasurementProcessed', cameraData);
-        const measurement = await sdk.postMeasurement(cameraData, RNFibriCheckView.version);
-        console.log('measurement', measurement);
+        setCameraData(cameraData);
       }}
       onFingerDetected={() => {
         console.log('finger detected');
