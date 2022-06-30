@@ -93,6 +93,11 @@ export interface MeasurementContext {
   | 'exercising'
   | 'other'
   | 'standing';
+  symptomSeverity?:
+  | '2a'
+  | '2b'
+  | '3'
+  | '4';
 }
 
 interface Device {

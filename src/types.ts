@@ -8,7 +8,7 @@ import {
   AffectedRecords,
 } from '@extrahorizon/javascript-sdk';
 
-import { Measurement, MeasurementCreationData } from './types/measurement';
+import { Measurement, MeasurementContext, MeasurementCreationData } from './types/measurement';
 import { PeriodicReport } from './types/report';
 
 export type UserRegisterData = RegisterUserData;
@@ -98,6 +98,13 @@ export interface FibricheckSDK {
    * @returns {Promise<Measurement>} measurement
    */
   postMeasurement: (measurement: MeasurementCreationData, cameraSdkVersion?: string) => Promise<Measurement>;
+  /**
+   * Add context to an existing measurement
+   * @param {string} measurementId
+   * @params {MeasurementContext} measurementContext
+   * @returns AffectedRecords
+   */
+  updateMeasurementContext: (measurementId: string, measurementContext?: MeasurementContext) => Promise<AffectedRecords>;
   /**
    * Gets a measurement by measurementId
    * @param {string} measurementId

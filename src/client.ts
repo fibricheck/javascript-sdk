@@ -1,7 +1,7 @@
-import { createOAuth1Client, findAllIterator, OptionsWithRql, PagedResult, PagedResultWithPager, ParamsOauth1, rqlBuilder, Schema, UserData, UserNotAuthenticatedError } from '@extrahorizon/javascript-sdk';
+import { createOAuth1Client, findAllIterator, LockedDocumentError, OptionsWithRql, PagedResult, PagedResultWithPager, ParamsOauth1, rqlBuilder, Schema, UserData, UserNotAuthenticatedError } from '@extrahorizon/javascript-sdk';
 import DeviceInfo from 'react-native-device-info';
 import { API_SERVICES, DEV_HOST, PRODUCTION_HOST, REQUIRED_DOCUMENTS, SCHEMA_NAMES } from './constants';
-import { retryUntil } from './helpers';
+import { retryForError, retryUntil } from './helpers';
 import { FibricheckSDK, Consent } from './types';
 import { GeneralConfiguration, UserConfiguration } from './types/configuration';
 import { Measurement, MeasurementResponseData } from './types/measurement';
@@ -36,44 +36,6 @@ export default (config: Config): FibricheckSDK => {
   const env: Env = config.env ?? 'production';
   const host = env === 'production' ? PRODUCTION_HOST : DEV_HOST;
   const exhSdk = createOAuth1Client({ host, ...config });
-  const getSchemaById = (function getSchema() {
-    let schemas: Record<string, Schema>;
-
-    return async (schemaId: string) => {
-      try {
-        if (!schemas) {
-          const schemaList = await exhSdk.data.schemas.findAll({
-            rql: rqlBuilder().in('name', Object.values(SCHEMA_NAMES)).select(['id', 'name']).build(),
-          });
-
-          schemas = schemaList.reduce(
-            (acc, schema) => ({ ...acc, [schema.name as string]: schema }),
-            {}
-          ) as Record<string, Schema>;
-        }
-        return schemas?.[schemaId];
-      } catch (error: any) {
-        if (error instanceof UserNotAuthenticatedError) {
-          throw Error(`
-Looks like you forgot to authenticate. Please check the README file to get started.  
-As example you can authenticate using this snippet:
-
-const sdk = client({
-  consumerKey: '${config.consumerKey}',
-  consumerSecret: '${config.consumerSecret}'
-});
-
-await sdk.authenticate({
-  email: '',
-  password: '',
-});
-`);
-        } else {
-          throw error;
-        }
-      }
-    };
-  }());
 
   return {
     register: data => exhSdk.users.createAccount(data) as Promise<UserData>,
@@ -123,9 +85,8 @@ await sdk.authenticate({
       },
     }),
     postMeasurement: async (measurement, cameraSdkVersion) => {
-      const schema = await getSchemaById(SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS);
       const androidId = await DeviceInfo.getAndroidId();
-      const result = await exhSdk.data.documents.create<MeasurementResponseData>(schema.id as string, {
+      const result = await exhSdk.data.documents.create<MeasurementResponseData>(SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS, {
         ...measurement,
         device: {
           os: DeviceInfo.getSystemVersion(),
@@ -145,19 +106,33 @@ await sdk.authenticate({
 
       return result as Measurement;
     },
-    getMeasurement: async measurementId => {
-      const schema = await getSchemaById(SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS);
-      return await exhSdk.data.documents.findById<MeasurementResponseData>(schema.id as string, measurementId) as Measurement;
+    updateMeasurementContext: async (measurementId, measurementContext) => {
+      try {
+        const result = await retryForError(
+          2000,
+          5,
+          () => exhSdk.data.documents.update(SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS, measurementId, measurementContext),
+          LockedDocumentError
+        );
+        return result;
+      } catch (error) {
+        throw new Error('Could not update measurement');
+      }
     },
+    getMeasurement: async measurementId => await exhSdk.data.documents.findById<MeasurementResponseData>(
+      SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS,
+      measurementId
+    ) as Measurement,
     getMeasurements: async () => {
-      const schema = await getSchemaById(SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS);
       const userId = await exhSdk.raw.userId as string;
       const rql = rqlBuilder().eq('creatorId', userId).build();
-      return await exhSdk.data.documents.find<MeasurementResponseData>(schema?.id as string, { rql }) as PagedResultWithPager<Measurement>;
+      return await exhSdk.data.documents.find<MeasurementResponseData>(
+        SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS,
+        { rql }
+      ) as PagedResultWithPager<Measurement>;
     },
     getMeasurementReportUrl: async measurementId => {
-      const schema = await getSchemaById(SCHEMA_NAMES.MEASUREMENT_REPORTS);
-      let report = await exhSdk.data.documents.findFirst<ReportDocumentData>(schema.id as string, {
+      let report = await exhSdk.data.documents.findFirst<ReportDocumentData>(SCHEMA_NAMES.MEASUREMENT_REPORTS, {
         rql: rqlBuilder()
           .eq('data.measurementId', measurementId)
           .build(),
@@ -171,7 +146,7 @@ await sdk.authenticate({
       // if no report exists, create it
       const me = await exhSdk.users.me();
       if (!report) {
-        report = await exhSdk.data.documents.create<ReportDocumentData>(schema.id as string, {
+        report = await exhSdk.data.documents.create<ReportDocumentData>(SCHEMA_NAMES.MEASUREMENT_REPORTS, {
           measurementId,
           language: me.language,
         }) as ReportDocument;
@@ -182,7 +157,7 @@ await sdk.authenticate({
         2000,
         15,
         async () => await exhSdk.data.documents.findById<ReportDocumentData>(
-          schema.id as string,
+          SCHEMA_NAMES.MEASUREMENT_REPORTS,
           report.id as string,
           { rql: rqlBuilder().eq('status', REPORT_STATUS.rendered).build() }
         ),

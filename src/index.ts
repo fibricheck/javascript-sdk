@@ -1,5 +1,5 @@
 import client from './client';
 
-export { getMostSeverelabel } from './helpers';
+export { getMostSevereLabel } from './helpers';
 
 export default client;
