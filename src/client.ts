@@ -1,4 +1,4 @@
-import { createOAuth1Client, findAllIterator, LockedDocumentError, OptionsWithRql, PagedResult, PagedResultWithPager, ParamsOauth1, rqlBuilder, UserData } from '@extrahorizon/javascript-sdk';
+import { createOAuth1Client, findAllIterator, LockedDocumentError, OptionsWithRql, PagedResult, ParamsOauth1, rqlBuilder, UserData } from '@extrahorizon/javascript-sdk';
 import DeviceInfo from 'react-native-device-info';
 import { API_SERVICES, DEV_HOST, PRODUCTION_HOST, REQUIRED_DOCUMENTS, SCHEMA_NAMES } from './constants';
 import { retryForError, retryUntil } from './helpers';
@@ -122,6 +122,11 @@ export default (config: Config): FibricheckSDK => {
         throw new Error('Could not update measurement');
       }
     },
+    updateProfile: async (userId, profileData) => {
+      const rql = rqlBuilder().eq('id', userId).build();
+
+      return await exhSdk.profiles.update(rql, profileData);
+    },
     getMeasurement: async measurementId => await exhSdk.data.documents.findById<MeasurementResponseData, MeasurementStatus>(
       SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS,
       measurementId
@@ -129,10 +134,11 @@ export default (config: Config): FibricheckSDK => {
     getMeasurements: async () => {
       const userId = await exhSdk.raw.userId as string;
       const rql = rqlBuilder().eq('creatorId', userId).build();
+
       return await exhSdk.data.documents.find<MeasurementResponseData, MeasurementStatus>(
         SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS,
         { rql }
-      ) as PagedResultWithPager<Measurement>;
+      );
     },
     getMeasurementReportUrl: async measurementId => {
       let report = await exhSdk.data.documents.findFirst<ReportDocumentData, ReportDocumentStatus>(SCHEMA_NAMES.MEASUREMENT_REPORTS, {
