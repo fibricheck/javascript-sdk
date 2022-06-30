@@ -1,7 +1,7 @@
 import { BadRequestError } from '@extrahorizon/javascript-sdk';
 import * as R from 'ramda';
 import { LABEL_SEVERITY } from './constants';
-import { Measurement, MeasurementDiagnosis } from './types/measurement';
+import { MeasurementDiagnosis, Measurement } from './types/measurement';
 
 function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));

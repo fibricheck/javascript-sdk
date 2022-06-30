@@ -1,21 +1,21 @@
-import { createOAuth1Client, findAllIterator, LockedDocumentError, OptionsWithRql, PagedResult, PagedResultWithPager, ParamsOauth1, rqlBuilder, Schema, UserData, UserNotAuthenticatedError } from '@extrahorizon/javascript-sdk';
+import { createOAuth1Client, findAllIterator, LockedDocumentError, OptionsWithRql, PagedResult, PagedResultWithPager, ParamsOauth1, rqlBuilder, UserData } from '@extrahorizon/javascript-sdk';
 import DeviceInfo from 'react-native-device-info';
 import { API_SERVICES, DEV_HOST, PRODUCTION_HOST, REQUIRED_DOCUMENTS, SCHEMA_NAMES } from './constants';
 import { retryForError, retryUntil } from './helpers';
 import { FibricheckSDK, Consent } from './types';
 import { GeneralConfiguration, UserConfiguration } from './types/configuration';
-import { Measurement, MeasurementResponseData } from './types/measurement';
+import { Measurement, MeasurementCreationData, MeasurementResponseData, MeasurementStatus } from './types/measurement';
 import { Prescription, PRESCRIPTION_STATUS } from './types/prescription';
-import { PeriodicReport, ReportDocument, ReportDocumentData, REPORT_STATUS } from './types/report';
+import { PeriodicReport, ReportDocument, ReportDocumentData, ReportDocumentStatus, REPORT_STATUS } from './types/report';
 import { version as fibricheckSdkVersion } from '../package.json';
 
 type Env = 'dev' | 'production';
 type Config = { env?: Env; } & Pick<ParamsOauth1, 'consumerKey' | 'consumerSecret'>
+
 /* function to parse a string like '1.5.0' to something like 'v150'
  * '1.5.0' format comes from the current documents
  * 'v150' format comes from the user's currently signed versions
  */
-
 export const documentVersionParse = (value: string) => `v${value.replace(/\./g, '')}`;
 
 /**
@@ -86,25 +86,28 @@ export default (config: Config): FibricheckSDK => {
     }),
     postMeasurement: async (measurement, cameraSdkVersion) => {
       const androidId = await DeviceInfo.getAndroidId();
-      const result = await exhSdk.data.documents.create<MeasurementResponseData>(SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS, {
-        ...measurement,
-        device: {
-          os: DeviceInfo.getSystemVersion(),
-          model: DeviceInfo.getModel(),
-          manufacturer: DeviceInfo.getBrand(),
-          type: androidId && androidId !== 'unknown' ? 'android' : 'ios',
-        },
-        app: {
-          build: Number(DeviceInfo.getBuildNumber()),
-          name: 'mobile-spot-check',
-          version: DeviceInfo.getVersion(),
-          fibricheck_sdk_version: fibricheckSdkVersion,
-          camera_sdk_version: cameraSdkVersion,
-        },
-        tags: ['FibriCheck-sdk'],
-      });
+      const result = await exhSdk.data.documents.create<MeasurementCreationData, MeasurementResponseData, MeasurementStatus>(
+        SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS,
+        {
+          ...measurement,
+          device: {
+            os: DeviceInfo.getSystemVersion(),
+            model: DeviceInfo.getModel(),
+            manufacturer: DeviceInfo.getBrand(),
+            type: androidId && androidId !== 'unknown' ? 'android' : 'ios',
+          },
+          app: {
+            build: Number(DeviceInfo.getBuildNumber()),
+            name: 'mobile-spot-check',
+            version: DeviceInfo.getVersion(),
+            fibricheck_sdk_version: fibricheckSdkVersion,
+            camera_sdk_version: cameraSdkVersion,
+          },
+          tags: ['FibriCheck-sdk'],
+        }
+      );
 
-      return result as Measurement;
+      return result;
     },
     updateMeasurementContext: async (measurementId, measurementContext) => {
       try {
@@ -119,20 +122,20 @@ export default (config: Config): FibricheckSDK => {
         throw new Error('Could not update measurement');
       }
     },
-    getMeasurement: async measurementId => await exhSdk.data.documents.findById<MeasurementResponseData>(
+    getMeasurement: async measurementId => await exhSdk.data.documents.findById<MeasurementResponseData, MeasurementStatus>(
       SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS,
       measurementId
     ) as Measurement,
     getMeasurements: async () => {
       const userId = await exhSdk.raw.userId as string;
       const rql = rqlBuilder().eq('creatorId', userId).build();
-      return await exhSdk.data.documents.find<MeasurementResponseData>(
+      return await exhSdk.data.documents.find<MeasurementResponseData, MeasurementStatus>(
         SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS,
         { rql }
       ) as PagedResultWithPager<Measurement>;
     },
     getMeasurementReportUrl: async measurementId => {
-      let report = await exhSdk.data.documents.findFirst<ReportDocumentData>(SCHEMA_NAMES.MEASUREMENT_REPORTS, {
+      let report = await exhSdk.data.documents.findFirst<ReportDocumentData, ReportDocumentStatus>(SCHEMA_NAMES.MEASUREMENT_REPORTS, {
         rql: rqlBuilder()
           .eq('data.measurementId', measurementId)
           .build(),
@@ -146,10 +149,10 @@ export default (config: Config): FibricheckSDK => {
       // if no report exists, create it
       const me = await exhSdk.users.me();
       if (!report) {
-        report = await exhSdk.data.documents.create<ReportDocumentData>(SCHEMA_NAMES.MEASUREMENT_REPORTS, {
+        report = await exhSdk.data.documents.create<ReportDocumentData, ReportDocument, ReportDocumentStatus>(SCHEMA_NAMES.MEASUREMENT_REPORTS, {
           measurementId,
           language: me.language,
-        }) as ReportDocument;
+        });
       }
 
       // await rendered

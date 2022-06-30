@@ -159,6 +159,13 @@ export interface CameraData {
 export type MeasurementCreationData = CameraData & {
   signals?: Record<string, { time: number[]; data: number[]; }>;
   context?: MeasurementContext;
+  device?: Device;
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
+  app?: App;
+  tags?: string[];
 };
 
 export type MeasurementResponseData = MeasurementCreationData & {
@@ -176,9 +183,7 @@ export type MeasurementResponseData = MeasurementCreationData & {
   indicator?: Indicator;
   algoAnalysis?: AlgoAnalysis;
   review_type?: ReviewType;
-  tags: string[];
+  tags?: string[];
 };
 
-export type Measurement = Document<MeasurementResponseData> & {
-  status: MeasurementStatus;
-};
+export type Measurement = Document<MeasurementResponseData, MeasurementStatus>;

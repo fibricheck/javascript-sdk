@@ -12,7 +12,6 @@ import { Measurement, MeasurementContext, MeasurementCreationData } from './type
 import { PeriodicReport } from './types/report';
 
 export type UserRegisterData = RegisterUserData;
-
 export type LegalDocumentKey = 'privacyPolicy' | 'termsOfUse';
 
 export type FindAllIterator<T> = AsyncGenerator<
