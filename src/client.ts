@@ -4,7 +4,7 @@ import { API_SERVICES, DEV_HOST, PRODUCTION_HOST, REQUIRED_DOCUMENTS, SCHEMA_NAM
 import { retryForError, retryUntil } from './helpers';
 import { FibricheckSDK, Consent } from './types';
 import { GeneralConfiguration, UserConfiguration } from './types/configuration';
-import { Measurement, MeasurementCreationData, MeasurementResponseData, MeasurementStatus } from './types/measurement';
+import { MeasurementCreationData, MeasurementResponseData, MeasurementStatus } from './types/measurement';
 import { Prescription, PRESCRIPTION_STATUS } from './types/prescription';
 import { PeriodicReport, ReportDocument, ReportDocumentData, ReportDocumentStatus, REPORT_STATUS } from './types/report';
 import { version as fibricheckSdkVersion } from '../package.json';
@@ -111,13 +111,12 @@ export default (config: Config): FibricheckSDK => {
     },
     updateMeasurementContext: async (measurementId, measurementContext) => {
       try {
-        const result = await retryForError(
+        return retryForError(
           2000,
           5,
           () => exhSdk.data.documents.update(SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS, measurementId, measurementContext),
           LockedDocumentError
         );
-        return result;
       } catch (error) {
         throw new Error('Could not update measurement');
       }
@@ -165,7 +164,7 @@ export default (config: Config): FibricheckSDK => {
       const result = await retryUntil<ReportDocument>(
         2000,
         15,
-        async () => await exhSdk.data.documents.findById<ReportDocumentData>(
+        () => exhSdk.data.documents.findById<ReportDocumentData>(
           SCHEMA_NAMES.MEASUREMENT_REPORTS,
           report.id as string,
           { rql: rqlBuilder().eq('status', REPORT_STATUS.rendered).build() }
