@@ -73,7 +73,7 @@ export default (config: Config): FibricheckSDK => {
 
       return tokenData;
     },
-    giveConsent: async (data: Omit<Consent, 'url'>) => await exhSdk.configurations.users.update(await exhSdk.raw.userId as string, {
+    giveConsent: async (data: Omit<Consent, 'url'>) => exhSdk.configurations.users.update(await exhSdk.raw.userId as string, {
       data: {
         documents: {
           [data.key]: {
@@ -87,24 +87,24 @@ export default (config: Config): FibricheckSDK => {
     postMeasurement: async (measurement, cameraSdkVersion) => {
       const androidId = await DeviceInfo.getAndroidId();
       const result = await exhSdk.data.documents.create<MeasurementCreationData, MeasurementResponseData, MeasurementStatus>(
-        SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS,
-        {
-          ...measurement,
-          device: {
+       SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS,
+       {
+         ...measurement,
+         device: {
             os: DeviceInfo.getSystemVersion(),
             model: DeviceInfo.getModel(),
             manufacturer: DeviceInfo.getBrand(),
             type: androidId && androidId !== 'unknown' ? 'android' : 'ios',
-          },
-          app: {
+         },
+         app: {
             build: Number(DeviceInfo.getBuildNumber()),
-            name: 'mobile-spot-check',
+           name: 'mobile-spot-check',
             version: DeviceInfo.getVersion(),
-            fibricheck_sdk_version: fibricheckSdkVersion,
-            camera_sdk_version: cameraSdkVersion,
-          },
-          tags: ['FibriCheck-sdk'],
-        }
+           fibricheck_sdk_version: fibricheckSdkVersion,
+           camera_sdk_version: cameraSdkVersion,
+         },
+         tags: ['FibriCheck-sdk'],
+       }
       );
 
       return result;
@@ -122,20 +122,20 @@ export default (config: Config): FibricheckSDK => {
         throw new Error('Could not update measurement');
       }
     },
-    updateProfile: async (userId, profileData) => {
+    updateProfile: (userId, profileData) => {
       const rql = rqlBuilder().eq('id', userId).build();
 
-      return await exhSdk.profiles.update(rql, profileData);
+      return exhSdk.profiles.update(rql, profileData);
     },
-    getMeasurement: async measurementId => await exhSdk.data.documents.findById<MeasurementResponseData, MeasurementStatus>(
+    getMeasurement: async measurementId => exhSdk.data.documents.findById<MeasurementResponseData, MeasurementStatus>(
       SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS,
       measurementId
-    ) as Measurement,
+    ),
     getMeasurements: async () => {
       const userId = await exhSdk.raw.userId as string;
       const rql = rqlBuilder().eq('creatorId', userId).build();
 
-      return await exhSdk.data.documents.find<MeasurementResponseData, MeasurementStatus>(
+      return exhSdk.data.documents.find<MeasurementResponseData, MeasurementStatus>(
         SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS,
         { rql }
       );
