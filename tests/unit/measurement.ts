@@ -4,6 +4,7 @@ import { FibricheckSDK } from '../../src/types';
 import { mockClientParams, userCredentials } from '../__helpers__/authentication';
 import { cameraResult, mockApp, mockDevice, mockSchemas } from '../__helpers__/measurement';
 import { featureDataAllowedToMeasureMock, featureDataNotAllowedToMeasureMock } from '../__helpers__/featureData';
+import { MeasurementError } from '../../src/models/Errors';
 
 describe('measurement', () => {
   let sdk: FibricheckSDK;
@@ -35,7 +36,7 @@ describe('measurement', () => {
     (mockSdk.raw as any).userId = 'mockId';
     mockSdk.data.documents.findFirst.mockResolvedValue({ data: featureDataNotAllowedToMeasureMock });
 
-    await expect(sdk.postMeasurement).rejects.toThrow();
+    await expect(sdk.postMeasurement).rejects.toBeInstanceOf(MeasurementError);
   });
 
   it('should fetch a measurement', async () => {

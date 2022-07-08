@@ -3,6 +3,7 @@ import client from '../../src';
 import { mockClientParams } from '../__helpers__/authentication';
 import { mockSchemas } from '../__helpers__/measurement';
 import { API_SERVICES } from '../../src/constants';
+import { PrescriptionError } from '../../src/models/Errors';
 
 const sdk = client(mockClientParams);
 
@@ -70,7 +71,7 @@ describe('prescription', () => {
     try {
       await sdk.activatePrescription('123456789');
     } catch (error) {
-      expect(error).toEqual(new Error('alreadyActivated'));
+      expect(error).toBeInstanceOf(PrescriptionError);
     }
   });
 
@@ -83,7 +84,7 @@ describe('prescription', () => {
     try {
       await sdk.activatePrescription('123456789');
     } catch (error) {
-      expect(error).toEqual(new Error('notPaid'));
+      expect(error).toBeInstanceOf(PrescriptionError);
     }
   });
 
