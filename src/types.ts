@@ -95,7 +95,7 @@ export interface FibricheckSDK {
    * Send a measurement to the cloud.
    * @see https://docs.fibricheck.com/examples#react-component-to-make-a-measurement
    * @params {MeasurementCreationData} measurementData
-   * @throws {measurementNotAllowed}
+   * @throws {MeasurementError}
    * @returns {Promise<Measurement>} measurement
    */
   postMeasurement: (measurement: MeasurementCreationData, cameraSdkVersion?: string) => Promise<Measurement>;
@@ -148,8 +148,7 @@ export interface FibricheckSDK {
   getPeriodicReportPdf: (reportId: string) => Promise<ArrayBuffer>;
   /**
    * Activates a prescription hash, so the user can perform a measurement
-   * @throws {alreadyActivated}
-   * @throws {notPaid}
+   * @throws {PrescriptionError}
    */
   activatePrescription: (hash: string) => Promise<void>;
 }

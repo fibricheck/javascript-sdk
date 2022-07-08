@@ -9,6 +9,7 @@ import { Prescription, PRESCRIPTION_STATUS } from './types/prescription';
 import { PeriodicReport, ReportDocument, ReportDocumentData, ReportDocumentStatus, REPORT_STATUS } from './types/report';
 import { version as fibricheckSdkVersion } from '../package.json';
 import { FeatureData } from './types/featureData';
+import { MeasurementError, PrescriptionError } from './models/Errors';
 
 type Env = 'dev' | 'production';
 type Config = { env?: Env; } & Pick<ParamsOauth1, 'consumerKey' | 'consumerSecret' | 'requestLogger' | 'responseLogger'>;
@@ -98,26 +99,26 @@ export default (config: Config): FibricheckSDK => {
     postMeasurement: async (measurement, cameraSdkVersion) => {
       const isMeasurementAllowed = await canPerformMeasurement();
       if (!isMeasurementAllowed) {
-        throw new Error('measurementNotAllowed');
+        throw new MeasurementError('noActivePrescription', 'An active prescription is necessary to take a measurement');
       }
       const androidId = await DeviceInfo.getAndroidId();
       return exhSdk.data.documents.create<MeasurementCreationData, MeasurementResponseData, MeasurementStatus>(
         SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS,
         {
           ...measurement,
-         device: {
+          device: {
             os: DeviceInfo.getSystemVersion(),
             model: DeviceInfo.getModel(),
             manufacturer: DeviceInfo.getBrand(),
             type: androidId && androidId !== 'unknown' ? 'android' : 'ios',
-         },
-         app: {
+          },
+          app: {
             build: Number(DeviceInfo.getBuildNumber()),
-           name: 'mobile-spot-check',
+            name: 'mobile-spot-check',
             version: DeviceInfo.getVersion(),
-           fibricheck_sdk_version: fibricheckSdkVersion,
-           camera_sdk_version: cameraSdkVersion,
-         },
+            fibricheck_sdk_version: fibricheckSdkVersion,
+            camera_sdk_version: cameraSdkVersion,
+          },
           tags: ['FibriCheck-sdk'],
         }
       );
@@ -211,9 +212,9 @@ export default (config: Config): FibricheckSDK => {
 
       switch (prescription.status) {
         case PRESCRIPTION_STATUS.ACTIVATED:
-          throw new Error('alreadyActivated');
+          throw new PrescriptionError('alreadyActivated', 'A prescription can only be activated once');
         case PRESCRIPTION_STATUS.NOT_PAID:
-          throw new Error('notPaid');
+          throw new PrescriptionError('notPaid', 'This prescription needs to be paid before it can be activated');
         case PRESCRIPTION_STATUS.PAID_BY_USER:
         case PRESCRIPTION_STATUS.PAID_BY_GROUP:
         case PRESCRIPTION_STATUS.FREE:
