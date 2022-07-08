@@ -8,9 +8,10 @@ import { MeasurementCreationData, MeasurementResponseData, MeasurementStatus } f
 import { Prescription, PRESCRIPTION_STATUS } from './types/prescription';
 import { PeriodicReport, ReportDocument, ReportDocumentData, ReportDocumentStatus, REPORT_STATUS } from './types/report';
 import { version as fibricheckSdkVersion } from '../package.json';
+import { FeatureData } from './types/featureData';
 
 type Env = 'dev' | 'production';
-type Config = { env?: Env; } & Pick<ParamsOauth1, 'consumerKey' | 'consumerSecret'>
+type Config = { env?: Env; } & Pick<ParamsOauth1, 'consumerKey' | 'consumerSecret' | 'requestLogger' | 'responseLogger'>;
 
 /* function to parse a string like '1.5.0' to something like 'v150'
  * '1.5.0' format comes from the current documents
@@ -37,13 +38,22 @@ export default (config: Config): FibricheckSDK => {
   const host = env === 'production' ? PRODUCTION_HOST : DEV_HOST;
   const exhSdk = createOAuth1Client({ host, ...config });
 
+  const canPerformMeasurement = async () => {
+    const userId = await exhSdk.raw.userId as string;
+    const rql = rqlBuilder().eq('data.userId', userId).build();
+
+    const result = await exhSdk.data.documents.findFirst<FeatureData>(
+      SCHEMA_NAMES.FEATURE_ALGO,
+      { rql }
+    );
+
+    return !!result?.data?.canPerformMeasurement;
+  };
+
   return {
     register: data => exhSdk.users.createAccount(data) as Promise<UserData>,
     logout: exhSdk.auth.logout,
-    authenticate: async (
-      credentials,
-      onConsentNeeded
-    ) => {
+    authenticate: async (credentials, onConsentNeeded) => {
       const tokenData = await exhSdk.auth.authenticate(credentials as any);
 
       const { data: generalConfiguration } = await exhSdk.configurations.general.get() as { data: GeneralConfiguration; };
@@ -84,12 +94,17 @@ export default (config: Config): FibricheckSDK => {
         },
       },
     }),
+    canPerformMeasurement,
     postMeasurement: async (measurement, cameraSdkVersion) => {
+      const isMeasurementAllowed = await canPerformMeasurement();
+      if (!isMeasurementAllowed) {
+        throw new Error('measurementNotAllowed');
+      }
       const androidId = await DeviceInfo.getAndroidId();
-      const result = await exhSdk.data.documents.create<MeasurementCreationData, MeasurementResponseData, MeasurementStatus>(
-       SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS,
-       {
-         ...measurement,
+      return exhSdk.data.documents.create<MeasurementCreationData, MeasurementResponseData, MeasurementStatus>(
+        SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS,
+        {
+          ...measurement,
          device: {
             os: DeviceInfo.getSystemVersion(),
             model: DeviceInfo.getModel(),
@@ -103,13 +118,11 @@ export default (config: Config): FibricheckSDK => {
            fibricheck_sdk_version: fibricheckSdkVersion,
            camera_sdk_version: cameraSdkVersion,
          },
-         tags: ['FibriCheck-sdk'],
-       }
+          tags: ['FibriCheck-sdk'],
+        }
       );
-
-      return result;
     },
-    updateMeasurementContext: async (measurementId, measurementContext) => {
+    updateMeasurementContext: (measurementId, measurementContext) => {
       try {
         return retryForError(
           2000,
@@ -118,7 +131,7 @@ export default (config: Config): FibricheckSDK => {
           LockedDocumentError
         );
       } catch (error) {
-        throw new Error('Could not update measurement');
+        throw LockedDocumentError;
       }
     },
     updateProfile: (userId, profileData) => {

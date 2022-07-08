@@ -95,13 +95,20 @@ export interface FibricheckSDK {
    * Send a measurement to the cloud.
    * @see https://docs.fibricheck.com/examples#react-component-to-make-a-measurement
    * @params {MeasurementCreationData} measurementData
+   * @throws {measurementNotAllowed}
    * @returns {Promise<Measurement>} measurement
    */
   postMeasurement: (measurement: MeasurementCreationData, cameraSdkVersion?: string) => Promise<Measurement>;
   /**
+   * Check if the user is entitled to perform a measurement
+   * @returns {Promise<Measurement>} measurement
+   */
+  canPerformMeasurement: () => Promise<boolean>;
+  /**
    * Add context to an existing measurement
    * @param {string} measurementId
    * @params {MeasurementContext} measurementContext
+   * @throws {LockedDocumentError}
    * @returns AffectedRecords
    */
   updateMeasurementContext: (measurementId: string, measurementContext: MeasurementContext) => Promise<AffectedRecords>;
