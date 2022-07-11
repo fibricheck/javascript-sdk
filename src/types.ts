@@ -95,7 +95,7 @@ export interface FibricheckSDK {
    * Send a measurement to the cloud.
    * @see https://docs.fibricheck.com/examples#react-component-to-make-a-measurement
    * @params {MeasurementCreationData} measurementData
-   * @throws {MeasurementError}
+   * @throws {NoActivePrescriptionError}
    * @returns {Promise<Measurement>} measurement
    */
   postMeasurement: (measurement: MeasurementCreationData, cameraSdkVersion?: string) => Promise<Measurement>;
@@ -107,7 +107,7 @@ export interface FibricheckSDK {
   /**
    * Add context to an existing measurement
    * @param {string} measurementId
-   * @params {MeasurementContext} measurementContext
+   * @params {MeasurementError} measurementContext
    * @throws {LockedDocumentError}
    * @returns AffectedRecords
    */
@@ -148,7 +148,8 @@ export interface FibricheckSDK {
   getPeriodicReportPdf: (reportId: string) => Promise<ArrayBuffer>;
   /**
    * Activates a prescription hash, so the user can perform a measurement
-   * @throws {PrescriptionError}
+   * @throws {NoActivePrescriptionError}
+   * @throws {AlreadyActivatedError}
    */
   activatePrescription: (hash: string) => Promise<void>;
 }
