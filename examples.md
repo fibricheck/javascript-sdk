@@ -48,8 +48,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 You can use the `RNFibriCheckView` exported from the `@fibricheck/react-native-camera-sdk` package to perform a measurement and hook up `sdk.postMeasurement` to post the data returned from the camera to the backend in the `onMeasurementProcessed` event.
 
+* Before taking a measurement, you need to check if you are entitled to perform a measurement. This can be achieved by invoking `sdk.canPerformMeasurement`. If you try to execute a measurement when you are not entitled, a `NoActivePrescriptionError` will be thrown. So make sure you've [Activated a Prescription](examples.md#activating-a-prescription).
 * It is highly recommended to provide the camera sdk version as a second argument, as shown in the example.
-* If you want to add a context to measurement, you need to add it before sending. We provided an example in the snippet below. The context is prefilled here, but needs to be completed by the user in the end product.
+* The measurement context is prefilled here, but needs to be completed by the user. The best practice is to add this at a later stage with `sdk.updateMeasurementContext`. More information about this can be found in the [Measurement Structure](measurement-structure.md#context).
 
 ```typescript
 import client from '@fibricheck/javascript-sdk';
@@ -348,4 +349,40 @@ await sdk.authenticate({
 });
 
 await sdk.activatePrescription('1234567890');
+```
+
+## Update Profile
+
+The heading of the reports displays information about the version of the app and the last used device. This information can be updated with the `sdk.updateProfile` function.
+
+```typescript
+import DeviceInfo from 'react-native-device-info';
+
+const appVersion = DeviceInfo.getVersion();
+const isAndroid = Platform.OS === 'android';
+
+const deviceOSVersion = DeviceInfo.getSystemVersion();
+const deviceModel = isAndroid
+  ? DeviceInfo.getModel()
+  : DeviceInfo.getDeviceId();
+deviceSystemName = isAndroid ? 'android' : 'ios';
+deviceManufacturer = await DeviceInfo.getManufacturer();
+
+const profileData = {
+  birthday: '06/07/1990';
+  gender: Gender.Male;
+  fibricheck_info:
+   app: {
+      version: appVersion,
+    },
+    device: {
+      os: deviceOSVersion,
+      model: deviceModel,
+      type: deviceSystemName,
+      manufacturer: deviceManufacturer,
+    }
+  }
+};
+
+await sdk.updateProfile('1234567890', profileData);
 ```

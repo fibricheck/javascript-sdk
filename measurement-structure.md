@@ -12,7 +12,7 @@ description: >-
 
 This snippet shows the interface that is implemented when performing a measurement via the `react-native-camera-sdk`. This way, you don't have to worry about populating these fields.
 
-```
+```typescript
 interface CameraData {
   acc?: MotionData;
   rotation?: MotionData;
@@ -62,8 +62,15 @@ interface MeasurementContext {
   | 'exercising'
   | 'other'
   | 'standing';
+  symptomSeverity?:
+  | '2a'
+  | '2b'
+  | '3'
+  | '4';
 }
 ```
+
+These symptoms can be directly added to a measurement or can be updated at a later stage by using `sdk.updateMeasurementContext`. This can be beneficial to the user experience. If you send the raw measurement data first, the processing of the measurement can already take place on the backend. When the user has selected their symptoms, it can then be added to the already processed measurement.
 
 ## Displaying a measurement
 
