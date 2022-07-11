@@ -159,7 +159,7 @@ export default (config: Config): FibricheckSDK => {
         rql: rqlBuilder()
           .eq('data.measurementId', measurementId)
           .build(),
-      }) as ReportDocument;
+      });
 
       // report exists and is rendered. Return current report url
       if (report?.status === REPORT_STATUS.rendered) {
@@ -169,7 +169,7 @@ export default (config: Config): FibricheckSDK => {
       // if no report exists, create it
       const me = await exhSdk.users.me();
       if (!report) {
-        report = await exhSdk.data.documents.create<ReportDocumentData, ReportDocument, ReportDocumentStatus>(SCHEMA_NAMES.MEASUREMENT_REPORTS, {
+        report = await exhSdk.data.documents.create<ReportDocumentData, ReportDocumentData, ReportDocumentStatus>(SCHEMA_NAMES.MEASUREMENT_REPORTS, {
           measurementId,
           language: me.language,
         });

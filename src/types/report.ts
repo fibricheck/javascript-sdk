@@ -9,9 +9,7 @@ export interface ReportDocumentData {
 
 export type ReportDocumentStatus = 'requested' | 'rendering' |'rendered';
 
-export type ReportDocument = Document<ReportDocumentData, ReportDocumentStatus> & {
-  creationTimestamp: Date;
-};
+export type ReportDocument = Document<ReportDocumentData, ReportDocumentStatus>;
 
 export interface PeriodicReport {
   id: string;
