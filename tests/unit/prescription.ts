@@ -3,6 +3,7 @@ import client from '../../src';
 import { mockClientParams } from '../__helpers__/authentication';
 import { mockSchemas } from '../__helpers__/measurement';
 import { API_SERVICES } from '../../src/constants';
+import { AlreadyActivatedError, NotPaidError } from '../../src/models/PrescriptionErrors';
 
 const sdk = client(mockClientParams);
 
@@ -66,25 +67,20 @@ describe('prescription', () => {
       ...basePrescription,
       status: 'ACTIVATED',
     };
+
     mockSdk.raw.get.mockResolvedValue({ data: activatedPrescription });
-    try {
-      await sdk.activatePrescription('123456789');
-    } catch (error) {
-      expect(error).toEqual(new Error('alreadyActivated'));
-    }
+
+    await expect(sdk.activatePrescription).rejects.toBeInstanceOf(AlreadyActivatedError);
   });
 
   it('throws with an unpaid prescription', async () => {
-    const activatedPrescription = {
+    const notPaidPrescription = {
       ...basePrescription,
       status: 'NOT_PAID',
     };
-    mockSdk.raw.get.mockResolvedValue({ data: activatedPrescription });
-    try {
-      await sdk.activatePrescription('123456789');
-    } catch (error) {
-      expect(error).toEqual(new Error('notPaid'));
-    }
+    mockSdk.raw.get.mockResolvedValue({ data: notPaidPrescription });
+
+    await expect(sdk.activatePrescription).rejects.toBeInstanceOf(NotPaidError);
   });
 
   afterEach(() => {

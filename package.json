@@ -1,6 +1,6 @@
 {
   "name": "@fibricheck/javascript-sdk",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Fibricheck API client for JavaScript/TypeScript ",
   "main": "build/index.cjs.js",
   "types": "build/types/src/index.d.ts",
@@ -11,6 +11,7 @@
   "licenseFilename": "LICENSE",
   "scripts": {
     "add-suffix": "node ./node_modules/npm-version-suffix/run-add-suffix.js",
+    "start": "yarn build && node ./build/index.cjs.js",
     "clean": "rimraf build",
     "lint": "eslint src/**/*.ts",
     "lint-fix": "yarn lint --quiet --fix",
@@ -34,6 +35,7 @@
     "@types/ramda": "^0.27.49",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
     "@typescript-eslint/parser": "^5.3.0",
+    "axios-logger": "^2.6.1",
     "chokidar": "^3.5.2",
     "copyfiles": "^2.4.1",
     "eslint": "^8.2.0",
@@ -45,7 +47,7 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@extrahorizon/javascript-sdk": "^6.1.1",
+    "@extrahorizon/javascript-sdk": "^7.1.0",
     "ramda": "^0.27.1",
     "react-native-device-info": "^8.4.5"
   }

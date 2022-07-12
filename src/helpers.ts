@@ -1,6 +1,7 @@
+import { BadRequestError } from '@extrahorizon/javascript-sdk';
 import * as R from 'ramda';
 import { LABEL_SEVERITY } from './constants';
-import { Measurement, MeasurementDiagnosis } from './types/measurement';
+import { MeasurementDiagnosis, Measurement } from './types/measurement';
 
 function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -19,6 +20,38 @@ export async function retryUntil<T>(interval = 2000, tries = 5, func: { (): Prom
   return retryUntil(interval, tries - 1, func, condition);
 }
 
+/**
+ * Retries the function if it fails with the specified error
+ * @param interval
+ * @param tries
+ * @param func
+ * @param errorToCompare
+ * @returns {Promise<T>}
+ */
+export async function retryForError<T>(
+  interval = 2000,
+  tries = 5,
+  func: () => Promise<T>,
+  errorToCompare: typeof BadRequestError
+): Promise<T> {
+  try {
+    const result = await func();
+    return result;
+  } catch (error) {
+    // ? Last try, throw error
+    if (tries === 1) {
+      throw error;
+    }
+
+    if (error instanceof errorToCompare) {
+      await delay(interval);
+      return retryForError(interval, tries - 1, func, errorToCompare);
+    }
+
+    throw error;
+  }
+}
+
 export const sortAndLastFn = R.pipe<
   MeasurementDiagnosis[],
   MeasurementDiagnosis[],
@@ -33,7 +66,7 @@ export const sortAndLastFn = R.pipe<
  * @param measurement
  * @returns MeasurementDiagnosis
  */
-export const getMostSeverelabel = (measurement: Measurement) => {
+export const getMostSevereLabel = (measurement: Measurement) => {
   const { diagnosis } = measurement.data ?? {};
 
   if (!diagnosis) {
