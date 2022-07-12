@@ -124,18 +124,12 @@ export default (config: Config): FibricheckSDK => {
         }
       );
     },
-    updateMeasurementContext: (measurementId, measurementContext) => {
-      try {
-        return retryForError(
-          2000,
-          5,
-          () => exhSdk.data.documents.update(SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS, measurementId, measurementContext),
-          LockedDocumentError
-        );
-      } catch (error) {
-        throw LockedDocumentError;
-      }
-    },
+    updateMeasurementContext: (measurementId, measurementContext) => retryForError(
+      2000,
+      5,
+      () => exhSdk.data.documents.update(SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS, measurementId, measurementContext),
+      LockedDocumentError
+    ),
     updateProfile: (userId, profileData) => {
       const rql = rqlBuilder().eq('id', userId).build();
 

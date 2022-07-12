@@ -101,13 +101,13 @@ export interface FibricheckSDK {
   postMeasurement: (measurement: MeasurementCreationData, cameraSdkVersion?: string) => Promise<Measurement>;
   /**
    * Check if the user is entitled to perform a measurement
-   * @returns {Promise<Measurement>} measurement
+   * @returns {Promise<boolean>} measurement
    */
   canPerformMeasurement: () => Promise<boolean>;
   /**
    * Add context to an existing measurement
    * @param {string} measurementId
-   * @params {MeasurementError} measurementContext
+   * @params {MeasurementContext} measurementContext
    * @throws {LockedDocumentError}
    * @returns AffectedRecords
    */

@@ -332,10 +332,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@extrahorizon/javascript-sdk@^7.0.0":
-  version "7.0.0"
-  resolved "https://npm.pkg.github.com/download/@extrahorizon/javascript-sdk/7.0.0/42bfcfd7313ea00a930ed4496fcc266cedaf7a94ec86345b2331ab54c6e5dba3#c01aa08df7c5ea989a2f1dce0069c18776e8b4ef"
-  integrity sha512-2sjzLr0cGcPh3XdoJaEPQ9gQiWHFO+NODYy23bB4V2g+M4mppInG8I7V/MBxTKDatHki4m8E4mn+fvnBqBV2sQ==
+"@extrahorizon/javascript-sdk@^7.1.0":
+  version "7.1.0"
+  resolved "https://npm.pkg.github.com/download/@extrahorizon/javascript-sdk/7.1.0/852f5eb367f037448e1868cf7fd3f6420bc7d05d8f0ee6d2d75edfc2cef61a29#8b4024722112f99c924cf013e4a53e8389a12302"
+  integrity sha512-kMzGrWjf5u/g85vFLqcv13kk8YWIs2YDL3SvrVpDzzcml8jq//vrtfFi3xScYkeOYNIQ16tFPRcHbQZwWOVy5g==
   dependencies:
     axios "^0.26.0"
     buffer "^6.0.3"
@@ -345,7 +345,7 @@
     oauth-1.0a "^2.2.6"
     platform-specific "^1.1.0"
     ts-toolbelt "^9.6.0"
-    typescript-json-decoder "^1.0.6"
+    typescript-json-decoder "^1.0.10"
 
 "@humanwhocodes/config-array@^0.6.0":
   version "0.6.0"
@@ -1258,9 +1258,9 @@ camelcase@^6.2.0:
   integrity sha512-c7wVvbw3f37nuobQNtgsgG9POC9qMbNuMQmTCqZv23b6MIz0fcYpBiOlv9gEN/hdLdnZTDQhg6e9Dq5M1vKvfg==
 
 caniuse-lite@^1.0.30001274:
-  version "1.0.30001279"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001279.tgz#eb06818da481ef5096a3b3760f43e5382ed6b0ce"
-  integrity sha512-VfEHpzHEXj6/CxggTwSFoZBBYGQfQv9Cf42KPlO79sWXCD1QNKWKsKzFeWL7QpZHJQYAvocqV6Rty1yJMkqWLQ==
+  version "1.0.30001365"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001365.tgz"
+  integrity sha512-VDQZ8OtpuIPMBA4YYvZXECtXbddMCUFJk1qu8Mqxfm/SZJNSr1cy4IuLCOL7RJ/YASrvJcYg1Zh+UEUQ5m6z8Q==
 
 chalk@^2.0.0, chalk@^2.4.2:
   version "2.4.2"
@@ -4128,10 +4128,10 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
-typescript-json-decoder@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/typescript-json-decoder/-/typescript-json-decoder-1.0.6.tgz#f5a44c163d9bba8fc5b46881fa5cc823d840c97d"
-  integrity sha512-acSpXrCf7LTEolJbqQDo6eP7h/mpO2u9VGJB4N6WvTcvKQdBIvHOXImXibn7N93kVwIoJbdikAOFdD8VDoeJaQ==
+typescript-json-decoder@^1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/typescript-json-decoder/-/typescript-json-decoder-1.0.10.tgz#27f6f7e4fce1ac61f8307a69a871758097c71e13"
+  integrity sha512-5cXg4Buq4AeMTp5faLlr4PjY0jQGrBnDIhkPqBqF4HMuTJj2Z9lTsLcvWT/9h0fltTsLmnNMmySrId63E14j+g==
 
 typescript@^4.4.4:
   version "4.4.4"

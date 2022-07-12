@@ -22,6 +22,7 @@ describe('measurement', () => {
   it('should post a measurement', async () => {
     (mockSdk.raw as any).userId = 'mockId';
     mockSdk.data.documents.findFirst.mockResolvedValue({ data: featureDataAllowedToMeasureMock });
+
     await sdk.postMeasurement(cameraResult, '1.0.0');
 
     expect(mockSdk.data.documents.create).toBeCalledWith('fibricheck-measurements', {
