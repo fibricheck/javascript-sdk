@@ -148,7 +148,7 @@ export interface FibricheckSDK {
   getPeriodicReportPdf: (reportId: string) => Promise<ArrayBuffer>;
   /**
    * Activates a prescription hash, so the user can perform a measurement
-   * @throws {NoActivePrescriptionError}
+   * @throws {NotPaidError}
    * @throws {AlreadyActivatedError}
    */
   activatePrescription: (hash: string) => Promise<void>;
