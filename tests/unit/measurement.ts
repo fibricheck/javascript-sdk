@@ -3,6 +3,8 @@ import client from '../../src';
 import { FibricheckSDK } from '../../src/types';
 import { mockClientParams, userCredentials } from '../__helpers__/authentication';
 import { cameraResult, mockApp, mockDevice, mockSchemas } from '../__helpers__/measurement';
+import { featureDataAllowedToMeasureMock, featureDataNotAllowedToMeasureMock } from '../__helpers__/featureData';
+import { NoActivePrescriptionError } from '../../src/models/MeasurementErrors';
 
 describe('measurement', () => {
   let sdk: FibricheckSDK;
@@ -18,6 +20,9 @@ describe('measurement', () => {
   });
 
   it('should post a measurement', async () => {
+    (mockSdk.raw as any).userId = 'mockId';
+    mockSdk.data.documents.findFirst.mockResolvedValue({ data: featureDataAllowedToMeasureMock });
+
     await sdk.postMeasurement(cameraResult, '1.0.0');
 
     expect(mockSdk.data.documents.create).toBeCalledWith('fibricheck-measurements', {
@@ -26,6 +31,13 @@ describe('measurement', () => {
       device: mockDevice,
       tags: ['FibriCheck-sdk'],
     });
+  });
+
+  it('throws when not allowed to post a measurement', async () => {
+    (mockSdk.raw as any).userId = 'mockId';
+    mockSdk.data.documents.findFirst.mockResolvedValue({ data: featureDataNotAllowedToMeasureMock });
+
+    await expect(sdk.postMeasurement).rejects.toBeInstanceOf(NoActivePrescriptionError);
   });
 
   it('should fetch a measurement', async () => {

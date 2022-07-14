@@ -7,6 +7,7 @@ export const PRODUCTION_HOST = 'api.fibricheck.com';
 export const SCHEMA_NAMES = {
   FIBRICHECK_MEASUREMENTS: 'fibricheck-measurements',
   MEASUREMENT_REPORTS: 'measurement-reports',
+  FEATURE_ALGO: 'feature-algo',
 } as const;
 
 export const API_SERVICES = {

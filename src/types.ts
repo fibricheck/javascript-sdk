@@ -8,11 +8,11 @@ import {
   AffectedRecords,
 } from '@extrahorizon/javascript-sdk';
 
-import { Measurement, MeasurementCreationData } from './types/measurement';
+import { Measurement, MeasurementContext, MeasurementCreationData } from './types/measurement';
+import { ProfileData } from './types/profile';
 import { PeriodicReport } from './types/report';
 
 export type UserRegisterData = RegisterUserData;
-
 export type LegalDocumentKey = 'privacyPolicy' | 'termsOfUse';
 
 export type FindAllIterator<T> = AsyncGenerator<
@@ -95,9 +95,30 @@ export interface FibricheckSDK {
    * Send a measurement to the cloud.
    * @see https://docs.fibricheck.com/examples#react-component-to-make-a-measurement
    * @params {MeasurementCreationData} measurementData
+   * @throws {NoActivePrescriptionError}
    * @returns {Promise<Measurement>} measurement
    */
   postMeasurement: (measurement: MeasurementCreationData, cameraSdkVersion?: string) => Promise<Measurement>;
+  /**
+   * Check if the user is entitled to perform a measurement
+   * @returns {Promise<boolean>} measurement
+   */
+  canPerformMeasurement: () => Promise<boolean>;
+  /**
+   * Add context to an existing measurement
+   * @param {string} measurementId
+   * @params {MeasurementContext} measurementContext
+   * @throws {LockedDocumentError}
+   * @returns AffectedRecords
+   */
+  updateMeasurementContext: (measurementId: string, measurementContext: MeasurementContext) => Promise<AffectedRecords>;
+  /**
+   * Update the user profile
+   * @param {string} userId
+   * @params {ProfileData} profileData
+   * @returns AffectedRecords
+   */
+  updateProfile: (userId: string, profileData: ProfileData) => Promise<AffectedRecords>;
   /**
    * Gets a measurement by measurementId
    * @param {string} measurementId
@@ -127,8 +148,8 @@ export interface FibricheckSDK {
   getPeriodicReportPdf: (reportId: string) => Promise<ArrayBuffer>;
   /**
    * Activates a prescription hash, so the user can perform a measurement
-   * @throws {alreadyActivated}
-   * @throws {notPaid}
+   * @throws {NotPaidError}
+   * @throws {AlreadyActivatedError}
    */
   activatePrescription: (hash: string) => Promise<void>;
 }
