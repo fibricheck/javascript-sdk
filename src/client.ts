@@ -130,7 +130,8 @@ export default (config: Config): FibricheckSDK => {
       () => exhSdk.data.documents.update(SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS, measurementId, measurementContext),
       LockedDocumentError
     ),
-    updateProfile: (userId, profileData) => {
+    updateProfile: async profileData => {
+      const userId = await exhSdk.raw.userId as string;
       const rql = rqlBuilder().eq('id', userId).build();
 
       return exhSdk.profiles.update(rql, profileData);
