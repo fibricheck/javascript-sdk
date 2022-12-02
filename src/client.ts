@@ -164,7 +164,7 @@ export default (config: Config): FibricheckSDK => {
         );
         // Check if the report is generated with the latest data of the measurement.
         const reportLastUpdatedTimestamp = report.data.forMeasurementUpdatedTimestamp || 0;
-        if (reportLastUpdatedTimestamp >= measurement.statusChangedTimestamp.getTime()) {
+        if (reportLastUpdatedTimestamp >= measurement.updateTimestamp.getTime()) {
           return `https://${host}/files/v1/${report?.data?.readFileToken}/file`;
         }
       }

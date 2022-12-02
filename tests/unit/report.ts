@@ -20,7 +20,7 @@ describe('report', () => {
   it('should get a report url for existing report', async () => {
     const date = new Date();
     mockSdk.data.documents.findFirst.mockResolvedValue({ id: 'reportId', status: 'rendered', data: { forMeasurementUpdatedTimestamp: date, readFileToken: 'token' } });
-    mockSdk.data.documents.findById.mockResolvedValue({ id: 'measurementId', status: 'reviewed', statusChangedTimestamp: date });
+    mockSdk.data.documents.findById.mockResolvedValue({ id: 'measurementId', status: 'reviewed', updateTimestamp: date });
 
     const reportUrl = await sdk.getMeasurementReportUrl('measurementId');
 
