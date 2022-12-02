@@ -227,7 +227,7 @@ export default (config: Config): FibricheckSDK => {
     },
     getPeriodicReportPdf: async reportId => {
       const me = await exhSdk.users.me();
-      const response = await exhSdk.raw.get<ArrayBuffer>(`/reports/v1/${reportId}/pdf/${me.language}`, {
+      const response = await exhSdk.raw.get<ArrayBuffer>(`/reports/v1/${reportId}/pdf/?language=${me.language}&time_zone=${me.timeZone}`, {
         responseType: 'arraybuffer',
       });
       return response.data;
