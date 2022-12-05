@@ -58,8 +58,8 @@ export default (config: Config): FibricheckSDK => {
     authenticate: async (credentials, onConsentNeeded) => {
       const tokenData = await exhSdk.auth.authenticate(credentials as any);
 
-      const { data: generalConfiguration } = await exhSdk.configurations.general.get() as { data: GeneralConfiguration; };
-      const { data: userConfig } = await exhSdk.configurations.users.get(tokenData.userId as string) as { data: UserConfiguration; };
+      const { data: generalConfiguration } = await exhSdk.configurations.general.get();
+      const { data: userConfig } = await exhSdk.configurations.users.get(tokenData.userId as string);
 
       const documentsToSign: Consent[] =
         REQUIRED_DOCUMENTS.map(documentName => {
