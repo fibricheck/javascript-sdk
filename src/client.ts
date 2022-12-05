@@ -156,6 +156,7 @@ export default (config: Config): FibricheckSDK => {
           .sort('-id')
           .build(),
       });
+      let outdatedReport = false;
 
       if (report?.status === REPORT_STATUS.rendered) {
         const measurement = await exhSdk.data.documents.findById<MeasurementResponseData, MeasurementStatus>(
@@ -164,14 +165,15 @@ export default (config: Config): FibricheckSDK => {
         );
         // Check if the report is generated with the latest data of the measurement.
         const reportLastUpdatedTimestamp = report.data.forMeasurementUpdatedTimestamp || 0;
-        if (reportLastUpdatedTimestamp >= measurement.updateTimestamp.getTime()) {
+        outdatedReport = measurement.updateTimestamp.getTime() > reportLastUpdatedTimestamp;
+        if (!outdatedReport) {
           return `https://${host}/files/v1/${report?.data?.readFileToken}/file`;
         }
       }
 
       // if no report exists or if the report is outdated, (re)create
       const me = await exhSdk.users.me();
-      if (!report) {
+      if (!report || outdatedReport) {
         report = await exhSdk.data.documents.create<ReportDocumentData, ReportDocumentData, ReportDocumentStatus>(SCHEMA_NAMES.MEASUREMENT_REPORTS, {
           measurementId,
           language: me.language,
