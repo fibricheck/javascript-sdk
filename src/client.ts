@@ -153,15 +153,23 @@ export default (config: Config): FibricheckSDK => {
       let report = await exhSdk.data.documents.findFirst<ReportDocumentData, ReportDocumentStatus>(SCHEMA_NAMES.MEASUREMENT_REPORTS, {
         rql: rqlBuilder()
           .eq('data.measurementId', measurementId)
+          .sort('-id')
           .build(),
       });
 
-      // report exists and is rendered. Return current report url
       if (report?.status === REPORT_STATUS.rendered) {
-        return `https://${host}/files/v1/${report?.data?.readFileToken}/file`;
+        const measurement = await exhSdk.data.documents.findById<MeasurementResponseData, MeasurementStatus>(
+          SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS,
+          measurementId
+        );
+        // Check if the report is generated with the latest data of the measurement.
+        const reportLastUpdatedTimestamp = report.data.forMeasurementUpdatedTimestamp || 0;
+        if (reportLastUpdatedTimestamp >= measurement.updateTimestamp.getTime()) {
+          return `https://${host}/files/v1/${report?.data?.readFileToken}/file`;
+        }
       }
 
-      // if no report exists, create it
+      // if no report exists or if the report is outdated, (re)create
       const me = await exhSdk.users.me();
       if (!report) {
         report = await exhSdk.data.documents.create<ReportDocumentData, ReportDocumentData, ReportDocumentStatus>(SCHEMA_NAMES.MEASUREMENT_REPORTS, {
@@ -227,7 +235,7 @@ export default (config: Config): FibricheckSDK => {
     },
     getPeriodicReportPdf: async reportId => {
       const me = await exhSdk.users.me();
-      const response = await exhSdk.raw.get<ArrayBuffer>(`/reports/v1/${reportId}/pdf/${me.language}`, {
+      const response = await exhSdk.raw.get<ArrayBuffer>(`/reports/v1/${reportId}/pdf/?language=${me.language}&time_zone=${me.timeZone}`, {
         responseType: 'arraybuffer',
       });
       return response.data;
