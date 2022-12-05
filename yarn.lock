@@ -332,10 +332,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@extrahorizon/javascript-sdk@^7.1.0":
-  version "7.1.0"
-  resolved "https://npm.pkg.github.com/download/@extrahorizon/javascript-sdk/7.1.0/852f5eb367f037448e1868cf7fd3f6420bc7d05d8f0ee6d2d75edfc2cef61a29#8b4024722112f99c924cf013e4a53e8389a12302"
-  integrity sha512-kMzGrWjf5u/g85vFLqcv13kk8YWIs2YDL3SvrVpDzzcml8jq//vrtfFi3xScYkeOYNIQ16tFPRcHbQZwWOVy5g==
+"@extrahorizon/javascript-sdk@^7.2.0":
+  version "7.2.0"
+  resolved "https://npm.pkg.github.com/download/@ExtraHorizon/javascript-sdk/7.2.0/290df2a17e5a4b42e0cea650747947933759494f#290df2a17e5a4b42e0cea650747947933759494f"
+  integrity sha512-mnRW5fNNy/HQ/IDroDLYRvTkmMTFVezbCb7w7FfCnXEgRD1MjpqlkSB5vLpMjMYLeTBNn6AiWKIuv+fz/4wOTQ==
   dependencies:
     axios "^0.26.0"
     buffer "^6.0.3"
@@ -3579,10 +3579,10 @@ react-is@^17.0.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
-react-native-device-info@^8.4.5:
-  version "8.4.5"
-  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-8.4.5.tgz#89434849d6146c003b8a8b29f4ed5b6261d8009b"
-  integrity sha512-0uKO9rBF4Uv8X+xLJdR6HkuyB2C4gNEcWdHPcS1MhtsIExP6NTbC3tgkrUUWZ7HODbn1MFx5LG5cGDe4X0zhWA==
+react-native-device-info@8.5.1:
+  version "8.5.1"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-8.5.1.tgz#40b38506d7cc1e2266da49fe7b9672166c765fc9"
+  integrity sha512-VMEP1c/X0KSOqBZDzs9/GHbacgdsoQqaBqI/fK98S5oMmKAfuIFjAjb4kvcNjC2mklD6JrlgXPnqKQQaX+kklg==
 
 readable-stream@~1.0.31:
   version "1.0.34"

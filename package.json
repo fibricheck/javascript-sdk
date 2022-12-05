@@ -1,6 +1,6 @@
 {
   "name": "@fibricheck/javascript-sdk",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Fibricheck API client for JavaScript/TypeScript ",
   "main": "build/index.cjs.js",
   "types": "build/types/src/index.d.ts",
@@ -47,8 +47,8 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@extrahorizon/javascript-sdk": "^7.1.0",
+    "@extrahorizon/javascript-sdk": "^7.2.0",
     "ramda": "^0.27.1",
-    "react-native-device-info": "^8.4.5"
+    "react-native-device-info": "8.5.1"
   }
 }

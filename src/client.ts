@@ -58,8 +58,8 @@ export default (config: Config): FibricheckSDK => {
     authenticate: async (credentials, onConsentNeeded) => {
       const tokenData = await exhSdk.auth.authenticate(credentials as any);
 
-      const { data: generalConfiguration } = await exhSdk.configurations.general.get() as { data: GeneralConfiguration; };
-      const { data: userConfig } = await exhSdk.configurations.users.get(tokenData.userId as string) as { data: UserConfiguration; };
+      const { data: generalConfiguration } = await exhSdk.configurations.general.get();
+      const { data: userConfig } = await exhSdk.configurations.users.get(tokenData.userId as string);
 
       const documentsToSign: Consent[] =
         REQUIRED_DOCUMENTS.map(documentName => {
@@ -130,7 +130,8 @@ export default (config: Config): FibricheckSDK => {
       () => exhSdk.data.documents.update(SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS, measurementId, measurementContext),
       LockedDocumentError
     ),
-    updateProfile: (userId, profileData) => {
+    updateProfile: async profileData => {
+      const userId = await exhSdk.raw.userId as string;
       const rql = rqlBuilder().eq('id', userId).build();
 
       return exhSdk.profiles.update(rql, profileData);
@@ -152,17 +153,27 @@ export default (config: Config): FibricheckSDK => {
       let report = await exhSdk.data.documents.findFirst<ReportDocumentData, ReportDocumentStatus>(SCHEMA_NAMES.MEASUREMENT_REPORTS, {
         rql: rqlBuilder()
           .eq('data.measurementId', measurementId)
+          .sort('-id')
           .build(),
       });
+      let outdatedReport = false;
 
-      // report exists and is rendered. Return current report url
       if (report?.status === REPORT_STATUS.rendered) {
-        return `https://${host}/files/v1/${report?.data?.readFileToken}/file`;
+        const measurement = await exhSdk.data.documents.findById<MeasurementResponseData, MeasurementStatus>(
+          SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS,
+          measurementId
+        );
+        // Check if the report is generated with the latest data of the measurement.
+        const reportLastUpdatedTimestamp = report.data.forMeasurementUpdatedTimestamp || 0;
+        outdatedReport = measurement.updateTimestamp.getTime() > reportLastUpdatedTimestamp;
+        if (!outdatedReport) {
+          return `https://${host}/files/v1/${report?.data?.readFileToken}/file`;
+        }
       }
 
-      // if no report exists, create it
+      // if no report exists or if the report is outdated, (re)create
       const me = await exhSdk.users.me();
-      if (!report) {
+      if (!report || outdatedReport) {
         report = await exhSdk.data.documents.create<ReportDocumentData, ReportDocumentData, ReportDocumentStatus>(SCHEMA_NAMES.MEASUREMENT_REPORTS, {
           measurementId,
           language: me.language,
@@ -226,7 +237,7 @@ export default (config: Config): FibricheckSDK => {
     },
     getPeriodicReportPdf: async reportId => {
       const me = await exhSdk.users.me();
-      const response = await exhSdk.raw.get<ArrayBuffer>(`/reports/v1/${reportId}/pdf/${me.language}`, {
+      const response = await exhSdk.raw.get<ArrayBuffer>(`/reports/v1/${reportId}/pdf/?language=${me.language}&time_zone=${me.timeZone}`, {
         responseType: 'arraybuffer',
       });
       return response.data;

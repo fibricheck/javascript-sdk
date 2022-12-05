@@ -114,11 +114,10 @@ export interface FibricheckSDK {
   updateMeasurementContext: (measurementId: string, measurementContext: MeasurementContext) => Promise<AffectedRecords>;
   /**
    * Update the user profile
-   * @param {string} userId
    * @params {ProfileData} profileData
    * @returns AffectedRecords
    */
-  updateProfile: (userId: string, profileData: ProfileData) => Promise<AffectedRecords>;
+  updateProfile: (profileData: ProfileData) => Promise<AffectedRecords>;
   /**
    * Gets a measurement by measurementId
    * @param {string} measurementId
