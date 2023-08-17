@@ -16,7 +16,6 @@ export const cameraResult: CameraData = {
     camera_iso: 0,
   },
   time: [],
-  yList: [],
   measurement_timestamp: Date.now(),
 };
 
