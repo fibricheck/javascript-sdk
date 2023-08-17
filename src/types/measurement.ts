@@ -87,9 +87,7 @@ export type Symptom =
   | 'chest_pains'
   | 'shortness_of_breath';
 
-export interface MeasurementContext {
-  symptoms: Symptom[];
-  activity:
+export type Activity =
   | 'resting'
   | 'sleeping'
   | 'sitting'
@@ -98,11 +96,17 @@ export interface MeasurementContext {
   | 'exercising'
   | 'other'
   | 'standing';
-  symptomSeverity?:
+
+export type SymptomSeverity =
   | '2a'
   | '2b'
   | '3'
   | '4';
+
+export interface MeasurementContext {
+  symptoms: Symptom[];
+  activity: Activity;
+  symptomSeverity?: SymptomSeverity;
 }
 
 interface Device {
