@@ -74,16 +74,21 @@ export type AlgoAnalysis =
 
 export type ReviewType = 'automatic';
 
-export interface MeasurementContext {
-  symptoms:
+export type Symptom =
   | 'no_symptoms'
   | 'lightheaded'
+  | 'dizziness'
   | 'confused'
+  | 'feeling_of_fainting'
+  | 'racing_heart'
   | 'fatigue'
   | 'other'
   | 'palpitations'
   | 'chest_pains'
-  | 'shortness_of_breath'[];
+  | 'shortness_of_breath';
+
+export interface MeasurementContext {
+  symptoms: Symptom[];
   activity:
   | 'resting'
   | 'sleeping'
