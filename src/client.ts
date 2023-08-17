@@ -3,7 +3,6 @@ import DeviceInfo from 'react-native-device-info';
 import { API_SERVICES, DEV_HOST, PRODUCTION_HOST, REQUIRED_DOCUMENTS, SCHEMA_NAMES } from './constants';
 import { retryForError, retryUntil } from './helpers';
 import { FibricheckSDK, Consent } from './types';
-import { GeneralConfiguration, UserConfiguration } from './types/configuration';
 import { MeasurementCreationData, MeasurementResponseData, MeasurementStatus } from './types/measurement';
 import { Prescription, PRESCRIPTION_STATUS } from './types/prescription';
 import { PeriodicReport, ReportDocument, ReportDocumentData, ReportDocumentStatus, REPORT_STATUS } from './types/report';
@@ -79,7 +78,7 @@ export default (config: Config): FibricheckSDK => {
           return false;
         }).filter(value => value) as Consent[];
 
-      if (documentsToSign.length > 0) {
+      if (documentsToSign.length > 0 && onConsentNeeded) {
         onConsentNeeded(documentsToSign);
       }
 

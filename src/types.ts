@@ -53,7 +53,7 @@ export interface FibricheckSDK {
    * @throws {MfaRequiredError}
    */
   authenticate(credentials: ParamsOauth1WithToken,
-    onConsentNeeded: (data: Consent[]) => void
+    onConsentNeeded?: (data: Consent[]) => void
   ): Promise<TokenDataOauth1>;
   /**
    * Use password authentication.
@@ -72,7 +72,7 @@ export interface FibricheckSDK {
    * @throws {MfaRequiredError}
    */
   authenticate(credentials: ParamsOauth1WithEmail,
-    onConsentNeeded: (data: Consent[]) => void
+    onConsentNeeded?: (data: Consent[]) => void
   ): Promise<TokenDataOauth1>;
   /**
    *  Logout
