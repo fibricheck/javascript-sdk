@@ -160,7 +160,6 @@ export interface CameraData {
     camera_iso: number;
   };
   time: number[];
-  yList: number[];
   abnormalities?: Abnormalities[];
   attempts?: number;
 }
