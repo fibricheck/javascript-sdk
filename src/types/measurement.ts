@@ -64,7 +64,11 @@ export type MeasurementDiagnosis =
   | 'atrial_fibrillation'
   | 'no_diagnosis';
 
+export type MeasurementLabel = 'regular' | 'quality_too_low' | 'possibly_irregular' | 'possible_atrial_fibrillation' | 'no_result'
+
 export type Indicator = 'normal' | 'quality' | 'urgent' | 'warning';
+
+export type IndicatorColor = 'green' | 'blue' | 'orange' | 'red' | 'grey';
 
 export type AlgoAnalysis =
   | 'premium'
@@ -192,6 +196,10 @@ export type MeasurementResponseData = MeasurementCreationData & {
   algoAnalysis?: AlgoAnalysis;
   review_type?: ReviewType;
   tags?: string[];
+  mostSevereLabel: {
+    color: IndicatorColor;
+    key: MeasurementDiagnosis | MeasurementLabel;
+  };
 };
 
 export type Measurement = Document<MeasurementResponseData, MeasurementStatus>;
