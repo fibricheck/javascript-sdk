@@ -1,4 +1,4 @@
-import { createOAuth1Client, createOAuth2Client, OAuth1Client, OAuth2Client, findAllIterator, LockedDocumentError, OptionsWithRql, PagedResult, ParamsOauth1, ParamsOauth2, rqlBuilder, UserData, TokenDataOauth1, TokenDataOauth2 } from '@extrahorizon/javascript-sdk';
+import { createOAuth1Client, createOAuth2Client, OAuth1Client, OAuth2Client, findAllIterator, LockedDocumentError, OptionsWithRql, PagedResult, ParamsOauth1, ParamsOauth2, rqlBuilder, UserData } from '@extrahorizon/javascript-sdk';
 import DeviceInfo from 'react-native-device-info';
 import { API_SERVICES, DEV_HOST, PRODUCTION_HOST, REQUIRED_DOCUMENTS, SCHEMA_NAMES } from './constants';
 import { retryForError, retryUntil } from './helpers';
