@@ -3264,9 +3264,9 @@ npm-run-path@^4.0.1:
   dependencies:
     path-key "^3.0.0"
 
-npm-version-suffix@galmail/npm-version-suffix:
+"npm-version-suffix@git+https://github.com/galmail/npm-version-suffix":
   version "0.2.0"
-  resolved "git+ssh://git@github.com/galmail/npm-version-suffix.git#1a722358b3eebca458ca25065a84c8a32e978cd4"
+  resolved "git+https://github.com/galmail/npm-version-suffix#1a722358b3eebca458ca25065a84c8a32e978cd4"
   dependencies:
     escape-string-regexp "^2.0.0"
     execa "^1.0.0"
