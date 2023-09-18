@@ -57,7 +57,7 @@ export interface FibricheckSDK {
    */
   authenticate(credentials: ParamsOauth1WithToken,
     onConsentNeeded?: (data: Consent[]) => void
-  ): Promise<TokenDataOauth1>;
+  ): Promise<TokenDataOauth1|TokenDataOauth2>;
   /**
    * Use OAuth1 password authentication.
    * As second parameter you need to pass in callback function that is fired when the user needs to sign updated legal documents
@@ -76,7 +76,7 @@ export interface FibricheckSDK {
    */
   authenticate(credentials: ParamsOauth1WithEmail,
     onConsentNeeded?: (data: Consent[]) => void
-  ): Promise<TokenDataOauth1>;
+  ): Promise<TokenDataOauth1|TokenDataOauth2>;
   /**
    * Use OAuth2 password authentication.
    * As second parameter you need to pass in callback function that is fired when the user needs to sign updated legal documents
@@ -95,7 +95,7 @@ export interface FibricheckSDK {
    */
   authenticate(credentials: ParamsOauth2Password,
     onConsentNeeded?: (data: Consent[]) => void
-  ): Promise<TokenDataOauth2>;
+  ): Promise<TokenDataOauth1|TokenDataOauth2>;
   /**
    * Use OAuth2 refreshtoken authentication.
    * As second parameter you need to pass in callback function that is fired when the user needs to sign updated legal documents
@@ -113,7 +113,7 @@ export interface FibricheckSDK {
    */
   authenticate(credentials: ParamsOauth2Refresh,
     onConsentNeeded?: (data: Consent[]) => void
-  ): Promise<TokenDataOauth2>;
+  ): Promise<TokenDataOauth1|TokenDataOauth2>;
   /**
    *  Logout
    *  @returns {boolean} Success
