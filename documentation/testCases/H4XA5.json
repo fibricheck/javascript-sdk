@@ -1,0 +1,22 @@
+{
+  "id": "H4XA5",
+  "name": "Importing the SDK library produces executable code",
+  "type": "manual",
+  "tier": "Smoke",
+  "planStatus": "Planned",
+  "motivation": "",
+  "testSteps": [
+    "Import the SDK using the following code: \n```\nimport client from \"@fibricheck/javascript-sdk\"\n```\n",
+    "Call an SDK method to verify that the SDK is imported correctly: \n```\nconst sdk = client({\n    consumerKey: \"\",\n    consumerSecret: \"\",\n  });\n```",
+    "Execute the script"
+  ],
+  "expectedResult": "The script runs successfully without errors",
+  "requiredTestEnvironmentIds": [],
+  "keyValues": [],
+  "parentNames": [
+    "Include the SDK in a 3rd party application",
+    "Ability to import SDK in a code environment",
+    "The SDK is exposed as a JavaScript library that can be imported"
+  ],
+  "updatedTime": 1697096618033
+}

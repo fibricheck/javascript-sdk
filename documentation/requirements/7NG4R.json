@@ -1,0 +1,13 @@
+{
+  "keyValues": [],
+  "testIds": [
+    "VAWFX"
+  ],
+  "origin": "user_need",
+  "updatedTime": 1697100228441,
+  "name": "Method `postMeasurement` uploads a measurement to FibriCheck Cloud",
+  "attachments": [],
+  "type": "specification",
+  "id": "7NG4R",
+  "description": "The method `postMeasurement(cameraData, context)` allows to upload a measurement to FibriCheck Cloud. \n\nThe `cameraData` object should contain the JSON output of the FibriCheck Camera SDK and can be augmented with context information. \nThe `context` information has the following properties: \n```\n{\n  ...measurement,\n  device: {\n    os: \"12.5.5\",\n    model: \"iPhone6,2\",\n    manufacturer: \"Apple\",\n    type: \"ios|android|ionic|versa|versa_lite|versa_2|Tizen|versa_3|sense\",\n  },\n  app: {\n    build: 10,\n    name: 'mobile-spot-check',\n    version: \"2.6.0\"\n    fibricheck_sdk_version: \"\",\n    camera_sdk_version: \"1.2.0\",\n  },\n  tags: ['custom-tag'],\n}\n```\n"
+}

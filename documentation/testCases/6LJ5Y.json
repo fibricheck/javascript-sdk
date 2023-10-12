@@ -1,0 +1,20 @@
+{
+  "id": "6LJ5Y",
+  "name": "Authentication using token/tokenSecret combination is successful",
+  "type": "manual",
+  "tier": "None",
+  "planStatus": "Planned",
+  "motivation": "",
+  "testSteps": [
+    "Execute the following code snippet with working values for `consumerKey`, `consumerSecret`, `token` and `tokenSecret`: \n\n```\nimport client from '@fibricheck/javascript-sdk';\n\nconst sdk = client({\n  consumerKey: \"<consumerKey>\",\n  consumerSecret: \"<consumerSecret>\",\n}\n\nawait sdk.authenticate({\n  token: \"<token>\",\n  tokenSecret: \"<tokenSecret>\"\n});\n\n```"
+  ],
+  "expectedResult": "The `authenticate()` function returns without an error, meaning the user was successfully authenticated using the OAuth1.0 mechanism with a `token` and `tokenSecret`",
+  "requiredTestEnvironmentIds": [],
+  "keyValues": [],
+  "parentNames": [
+    "Authentication",
+    "Authenticate against FibriCheck Cloud",
+    "Authenticate using token/tokenSecret combination"
+  ],
+  "updatedTime": 1697099300946
+}
