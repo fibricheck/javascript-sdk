@@ -1,0 +1,13 @@
+{
+  "id": "B3NC9",
+  "name": "The SDK is exposed as a JavaScript library that can be imported",
+  "description": "The SDK is exposed as a JavaScript library that can be imported using JavaScript ES6 `import` statements",
+  "type": "specification",
+  "origin": "user_need",
+  "keyValues": [],
+  "attachments": [],
+  "testIds": [
+    "H4XA5"
+  ],
+  "updatedTime": 1697096340114
+}

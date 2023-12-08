@@ -1,0 +1,13 @@
+{
+  "id": "6WX23",
+  "name": "Expose OAuth2.0 authentication client",
+  "description": "The SDK exposes a method `client` that takes an object containing a `clientId` and optionally a `clientSecret` value.  \nThis method returns an SDK client that uses OAuth2.0 to communicate with the FibriCheck backend.",
+  "type": "specification",
+  "origin": "user_need",
+  "keyValues": [],
+  "attachments": [],
+  "testIds": [
+    "4HZ4I"
+  ],
+  "updatedTime": 1696596125201
+}

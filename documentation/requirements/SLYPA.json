@@ -1,0 +1,13 @@
+{
+  "id": "SLYPA",
+  "name": "Method to update a user profile",
+  "description": "The `sdk.updateProfile(properties)` method updates the profile associated with the **authenticated user**.\nThe `properties` object contains the following information: \n```\n{\n  birthday: '06/07/1990';\n  gender: 0;\n  fibricheck_info:\n   app: {\n      version: appVersion,\n    },\n    device: {\n      os: deviceOSVersion,\n      model: deviceModel,\n      type: deviceSystemName,\n      manufacturer: deviceManufacturer,\n    }\n  }\n}\n```",
+  "type": "specification",
+  "origin": "user_need",
+  "keyValues": [],
+  "attachments": [],
+  "testIds": [
+    "G92MK"
+  ],
+  "updatedTime": 1697097436783
+}
