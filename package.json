@@ -6,7 +6,7 @@
   "types": "build/types/src/index.d.ts",
   "module": "build/index.mjs",
   "repository": "git@github.com:fibricheck/javascript-sdk.git",
-  "author": "Qompiumm",
+  "author": "Qompium",
   "license": "MIT",
   "licenseFilename": "LICENSE",
   "scripts": {
