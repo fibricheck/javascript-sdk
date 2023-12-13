@@ -6,6 +6,9 @@ import {
   PagedResult,
   TokenDataOauth1,
   AffectedRecords,
+  ParamsOauth2Password,
+  ParamsOauth2Refresh,
+  TokenDataOauth2,
 } from '@extrahorizon/javascript-sdk';
 
 import { Measurement, MeasurementContext, MeasurementCreationData } from './types/measurement';
@@ -37,7 +40,7 @@ export interface FibricheckSDK {
    */
   register: (data: UserRegisterData) => Promise<UserData>;
   /**
-   * Use token authentication.
+   * Use OAuth1 token authentication.
    * As second parameter you need to pass in callback function that is fired when the user needs to sign updated legal documents
    * @see https://docs.fibricheck.com/examples#legal-documents-updated
    * @example
@@ -53,10 +56,10 @@ export interface FibricheckSDK {
    * @throws {MfaRequiredError}
    */
   authenticate(credentials: ParamsOauth1WithToken,
-    onConsentNeeded: (data: Consent[]) => void
-  ): Promise<TokenDataOauth1>;
+    onConsentNeeded?: (data: Consent[]) => void
+  ): Promise<TokenDataOauth1|TokenDataOauth2>;
   /**
-   * Use password authentication.
+   * Use OAuth1 password authentication.
    * As second parameter you need to pass in callback function that is fired when the user needs to sign updated legal documents
    * @see https://docs.fibricheck.com/examples#legal-documents-updated
    * @example
@@ -72,8 +75,45 @@ export interface FibricheckSDK {
    * @throws {MfaRequiredError}
    */
   authenticate(credentials: ParamsOauth1WithEmail,
-    onConsentNeeded: (data: Consent[]) => void
-  ): Promise<TokenDataOauth1>;
+    onConsentNeeded?: (data: Consent[]) => void
+  ): Promise<TokenDataOauth1|TokenDataOauth2>;
+  /**
+   * Use OAuth2 password authentication.
+   * As second parameter you need to pass in callback function that is fired when the user needs to sign updated legal documents
+   * @see https://docs.fibricheck.com/examples#legal-documents-updated
+   * @example
+   * await sdk.auth.authenticate({
+   *   username: '',
+   *   password: '',
+   * });
+   * @throws {ApplicationNotAuthenticatedError}
+   * @throws {AuthenticationError}
+   * @throws {LoginTimeoutError}
+   * @throws {LoginFreezeError}
+   * @throws {TooManyFailedAttemptsError}
+   * @throws {MfaRequiredError}
+   */
+  authenticate(credentials: ParamsOauth2Password,
+    onConsentNeeded?: (data: Consent[]) => void
+  ): Promise<TokenDataOauth1|TokenDataOauth2>;
+  /**
+   * Use OAuth2 refreshtoken authentication.
+   * As second parameter you need to pass in callback function that is fired when the user needs to sign updated legal documents
+   * @see https://docs.fibricheck.com/examples#legal-documents-updated
+   * @example
+   * await sdk.auth.authenticate({
+   *   refreshToken: ''
+   * });
+   * @throws {ApplicationNotAuthenticatedError}
+   * @throws {AuthenticationError}
+   * @throws {LoginTimeoutError}
+   * @throws {LoginFreezeError}
+   * @throws {TooManyFailedAttemptsError}
+   * @throws {MfaRequiredError}
+   */
+  authenticate(credentials: ParamsOauth2Refresh,
+    onConsentNeeded?: (data: Consent[]) => void
+  ): Promise<TokenDataOauth1|TokenDataOauth2>;
   /**
    *  Logout
    *  @returns {boolean} Success

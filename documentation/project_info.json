@@ -1,0 +1,7 @@
+{
+  "name": "FibriCheck JavaScript SDK",
+  "version": "4.1.0",
+  "description": "The FibriCheck JavaScript SDK facilitates communication with the FibriCheck Cloud for developers that develop applications in React Native.",
+  "safetyClass": "A",
+  "keyValues": []
+}

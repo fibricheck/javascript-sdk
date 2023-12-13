@@ -64,7 +64,11 @@ export type MeasurementDiagnosis =
   | 'atrial_fibrillation'
   | 'no_diagnosis';
 
+export type MeasurementLabel = 'regular' | 'quality_too_low' | 'possibly_irregular' | 'possible_atrial_fibrillation' | 'no_result'
+
 export type Indicator = 'normal' | 'quality' | 'urgent' | 'warning';
+
+export type IndicatorColor = 'green' | 'blue' | 'orange' | 'red' | 'grey';
 
 export type AlgoAnalysis =
   | 'premium'
@@ -74,17 +78,20 @@ export type AlgoAnalysis =
 
 export type ReviewType = 'automatic';
 
-export interface MeasurementContext {
-  symptoms:
+export type Symptom =
   | 'no_symptoms'
   | 'lightheaded'
+  | 'dizziness'
   | 'confused'
+  | 'feeling_of_fainting'
+  | 'racing_heart'
   | 'fatigue'
   | 'other'
   | 'palpitations'
   | 'chest_pains'
-  | 'shortness_of_breath'[];
-  activity:
+  | 'shortness_of_breath';
+
+export type Activity =
   | 'resting'
   | 'sleeping'
   | 'sitting'
@@ -93,11 +100,17 @@ export interface MeasurementContext {
   | 'exercising'
   | 'other'
   | 'standing';
-  symptomSeverity?:
+
+export type SymptomSeverity =
   | '2a'
   | '2b'
   | '3'
   | '4';
+
+export interface MeasurementContext {
+  symptoms: Symptom[];
+  activity: Activity;
+  symptomSeverity?: SymptomSeverity;
 }
 
 interface Device {
@@ -151,7 +164,6 @@ export interface CameraData {
     camera_iso: number;
   };
   time: number[];
-  yList: number[];
   abnormalities?: Abnormalities[];
   attempts?: number;
 }
@@ -184,6 +196,10 @@ export type MeasurementResponseData = MeasurementCreationData & {
   algoAnalysis?: AlgoAnalysis;
   review_type?: ReviewType;
   tags?: string[];
+  mostSevereLabel: {
+    color: IndicatorColor;
+    key: MeasurementDiagnosis | MeasurementLabel;
+  };
 };
 
 export type Measurement = Document<MeasurementResponseData, MeasurementStatus>;

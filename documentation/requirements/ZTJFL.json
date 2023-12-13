@@ -1,0 +1,13 @@
+{
+  "id": "ZTJFL",
+  "name": "Method to register a new user",
+  "description": "The `register()` method, available in the SDK client accepts the following object as input: \n```\n{\n  firstName: 'John',\n  lastName: 'Doe',\n  email: 'john.doe@example.com',\n  password: 'Strong!987',\n  phoneNumber: '000000',\n  birthday: '1970/01/01',\n  gender: 0, // 0 = Not known; 1 = Male; 2 = Female; 9 = Not applicable\n  country: 'JO',\n  language: 'AR',\n  timeZone: 'Europe/Brussels'\n}\n```\n\nExecuting this method creates a user in FibriCheck Cloud",
+  "type": "specification",
+  "origin": "user_need",
+  "keyValues": [],
+  "attachments": [],
+  "testIds": [
+    "4RQTP"
+  ],
+  "updatedTime": 1697096789290
+}

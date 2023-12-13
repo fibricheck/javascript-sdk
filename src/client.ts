@@ -1,9 +1,8 @@
-import { createOAuth1Client, findAllIterator, LockedDocumentError, OptionsWithRql, PagedResult, ParamsOauth1, rqlBuilder, UserData } from '@extrahorizon/javascript-sdk';
+import { createOAuth1Client, createOAuth2Client, OAuth1Client, OAuth2Client, findAllIterator, LockedDocumentError, OptionsWithRql, PagedResult, ParamsOauth1, ParamsOauth2, rqlBuilder, UserData } from '@extrahorizon/javascript-sdk';
 import DeviceInfo from 'react-native-device-info';
 import { API_SERVICES, DEV_HOST, PRODUCTION_HOST, REQUIRED_DOCUMENTS, SCHEMA_NAMES } from './constants';
 import { retryForError, retryUntil } from './helpers';
 import { FibricheckSDK, Consent } from './types';
-import { GeneralConfiguration, UserConfiguration } from './types/configuration';
 import { MeasurementCreationData, MeasurementResponseData, MeasurementStatus } from './types/measurement';
 import { Prescription, PRESCRIPTION_STATUS } from './types/prescription';
 import { PeriodicReport, ReportDocument, ReportDocumentData, ReportDocumentStatus, REPORT_STATUS } from './types/report';
@@ -13,7 +12,10 @@ import { NotPaidError, AlreadyActivatedError } from './models/PrescriptionErrors
 import { NoActivePrescriptionError } from './models/MeasurementErrors';
 
 type Env = 'dev' | 'production';
-type Config = { env?: Env; } & Pick<ParamsOauth1, 'consumerKey' | 'consumerSecret' | 'requestLogger' | 'responseLogger'>;
+
+type Oauth1Config = { env?: Env; } & Pick<ParamsOauth1, 'consumerKey' | 'consumerSecret' | 'requestLogger' | 'responseLogger'>;
+type Oauth2Config = { env?: Env; } & Pick<ParamsOauth2, 'clientId' | 'clientSecret' | 'requestLogger' | 'responseLogger'>;
+type Config = Oauth1Config | Oauth2Config;
 
 /* function to parse a string like '1.5.0' to something like 'v150'
  * '1.5.0' format comes from the current documents
@@ -38,7 +40,7 @@ export const documentVersionParse = (value: string) => `v${value.replace(/\./g, 
 export default (config: Config): FibricheckSDK => {
   const env: Env = config.env ?? 'production';
   const host = env === 'production' ? PRODUCTION_HOST : DEV_HOST;
-  const exhSdk = createOAuth1Client({ host, ...config });
+  const exhSdk: OAuth1Client | OAuth2Client = 'consumerKey' in config ? createOAuth1Client({ host, ...config }) : createOAuth2Client({ host, ...config });
 
   const canPerformMeasurement = async () => {
     const userId = await exhSdk.raw.userId as string;
@@ -56,7 +58,13 @@ export default (config: Config): FibricheckSDK => {
     register: data => exhSdk.users.createAccount(data) as Promise<UserData>,
     logout: exhSdk.auth.logout,
     authenticate: async (credentials, onConsentNeeded) => {
-      const tokenData = await exhSdk.auth.authenticate(credentials as any);
+      let tokenData;
+
+      if ('consumerKey' in config) {
+        tokenData = await (exhSdk as OAuth1Client).auth.authenticate(credentials as any);
+      } else {
+        tokenData = await (exhSdk as OAuth2Client).auth.authenticate(credentials as any);
+      }
 
       const { data: generalConfiguration } = await exhSdk.configurations.general.get();
       const { data: userConfig } = await exhSdk.configurations.users.get(tokenData.userId as string);
@@ -79,7 +87,7 @@ export default (config: Config): FibricheckSDK => {
           return false;
         }).filter(value => value) as Consent[];
 
-      if (documentsToSign.length > 0) {
+      if (documentsToSign.length > 0 && onConsentNeeded) {
         onConsentNeeded(documentsToSign);
       }
 

@@ -39,10 +39,28 @@ You can find the latest documentation and examples on [https://docs.fibricheck.c
 ```javascript
 import client from "@fibricheck/javascript-sdk";
 
+
+// Authenticate using OAuth1.0 mechanism
 (async () => {
   const sdk = client({
+    env: "dev|production",
     consumerKey: "",
     consumerSecret: "",
+  });
+
+  await sdk.authenticate({
+    password: "",
+    email: "",
+  });
+})();
+
+
+// Authenticate using OAuth2.0 mechanism
+(async () => {
+  const sdk = client({
+    env: "dev|production",
+    clientId: "",
+    clientSecret: "",
   });
 
   await sdk.authenticate({
