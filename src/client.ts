@@ -3,7 +3,7 @@ import DeviceInfo from 'react-native-device-info';
 import { API_SERVICES, DEV_HOST, PRODUCTION_HOST, REQUIRED_DOCUMENTS, SCHEMA_NAMES } from './constants';
 import { retryForError, retryUntil } from './helpers';
 import { FibricheckSDK, Consent } from './types';
-import { MeasurementCreationData, MeasurementResponseData, MeasurementStatus } from './types/measurement';
+import { Measurement, MeasurementCreationData, MeasurementResponseData, MeasurementStatus } from './types/measurement';
 import { Prescription, PRESCRIPTION_STATUS } from './types/prescription';
 import { PeriodicReport, ReportDocument, ReportDocumentData, ReportDocumentStatus, REPORT_STATUS } from './types/report';
 import { version as fibricheckSdkVersion } from '../package.json';
@@ -40,7 +40,7 @@ export const documentVersionParse = (value: string) => `v${value.replace(/\./g, 
 export default (config: Config): FibricheckSDK => {
   const env: Env = config.env ?? 'production';
   const host = env === 'production' ? PRODUCTION_HOST : DEV_HOST;
-  const exhSdk: OAuth1Client | OAuth2Client = 'consumerKey' in config ? createOAuth1Client({ host, ...config }) : createOAuth2Client({ host, ...config });
+  const exhSdk: OAuth1Client | OAuth2Client = 'consumerKey' in config ? createOAuth1Client({ host, normalizeCustomData: true, ...config }) : createOAuth2Client({ host, normalizeCustomData: true, ...config });
 
   const canPerformMeasurement = async () => {
     const userId = await exhSdk.raw.userId as string;
@@ -147,7 +147,7 @@ export default (config: Config): FibricheckSDK => {
     getMeasurement: async measurementId => exhSdk.data.documents.findById<MeasurementResponseData, MeasurementStatus>(
       SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS,
       measurementId
-    ),
+    ) as Promise<Measurement>,
     getMeasurements: async () => {
       const userId = await exhSdk.raw.userId as string;
       const rql = rqlBuilder().eq('creatorId', userId).build();
@@ -171,6 +171,9 @@ export default (config: Config): FibricheckSDK => {
           SCHEMA_NAMES.FIBRICHECK_MEASUREMENTS,
           measurementId
         );
+        if (!measurement) {
+          throw new Error(`Measurement ${measurementId} not found`);
+        }
         // Check if the report is generated with the latest data of the measurement.
         const reportLastUpdatedTimestamp = report.data.forMeasurementUpdatedTimestamp || 0;
         outdatedReport = measurement.updateTimestamp.getTime() > reportLastUpdatedTimestamp;
@@ -189,12 +192,13 @@ export default (config: Config): FibricheckSDK => {
       }
 
       // await rendered
+      const reportId = report.id as string;
       const result = await retryUntil<ReportDocument>(
         2000,
         15,
         () => exhSdk.data.documents.findById<ReportDocumentData>(
           SCHEMA_NAMES.MEASUREMENT_REPORTS,
-          report.id as string,
+          reportId,
           { rql: rqlBuilder().eq('status', REPORT_STATUS.rendered).build() }
         ),
         (value: ReportDocument) => !!value
